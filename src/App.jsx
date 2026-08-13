@@ -1,66 +1,44 @@
 import { useState } from "react";
-import { Routes, Route } from "react-router";
+import { GAME_ITEMS } from "./data/items";
+import SearchBar from "./components/SearchBar";
+import ItemGrid from "./components/ItemGrid";
+import Cart from "./components/Cart";
+import Checkout from "./components/Checkout";
+import { useCart } from "./context/CartContext";
 
-import ProductList from "./components/ProductList";
-import ItemPage from "./components/ItemPage";
-import CheckoutForm from "./components/CheckOutForm";
+export default function App() {
+  const [items] = useState(GAME_ITEMS);
+  const [search, setSearch] = useState("");
+  const { cartCount } = useCart();
 
-function App() {
-  const [cart, setCart] = useState([]);
+  const filteredItems = items.filter((item) =>
+    `${item.name} ${item.category} ${item.rarity}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={<ProductList />}
-      />
+    <div className="app-shell">
+      <header className="site-header">
+        <div>
+          <p className="eyebrow">Hook Map Project</p>
+          <h1>Game Items Store</h1>
+          <p className="subtitle">Build your loadout and review React hooks along the way.</p>
+        </div>
+        <div className="header-cart">Cart <span>{cartCount}</span></div>
+      </header>
 
-      <Route
-        path="/products/:id"
-        element={
-          <ItemPage
-            cart={cart}
-            setCart={setCart}
-          />
-        }
-      />
+      <main>
+        <section className="catalog-section">
+          <SearchBar value={search} onChange={setSearch} />
+          <ItemGrid items={filteredItems} />
+        </section>
 
-      <Route
-        path="/checkout"
-        element={
-          <CheckoutForm
-            cart={cart}
-            setCart={setCart}
-          />
-        }
-      />
-    </Routes>
+        <section className="checkout-layout">
+          <Cart />
+          <Checkout />
+        </section>
+      </main>
+    </div>
   );
 }
-
-export default App;
-    //                 App
-    //              cart state
-    //                  │
-    //        ┌─────────┴─────────┐
-    //        │                   │
-    //        ▼                   ▼
-    //    ItemPage          CheckoutForm
-    //        │                   │
-    //  Add to cart          reads cart
-    //        │                   │
-    //        └──── setCart ──────┘
-
-// before:
-  //                     App
-  //              quantity state
-  //                    │
-  //          ┌─────────┴─────────┐
-  //          │                   │
-  //          ▼                   ▼
-  //      ItemPage          CheckoutForm
-  //          │                   │
-  //  changes quantity       reads quantity
-  //    setQuantity              │
-  //          │                   │
-  //          └────── App ────────┘

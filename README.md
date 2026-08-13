@@ -1,16 +1,40 @@
-# React + Vite
+# Game Items Store — Hook Map
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small React/Vite project that reviews the requested hooks step by step.
 
-Currently, two official plugins are available:
+## Hook map
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. **Item Data + Add to Cart — `useState`**
+   - `App.jsx` stores the mock item list and search text with `useState`.
+   - `ItemCard.jsx` adds items to the cart.
 
-## React Compiler
+2. **Cart Count in Tab Title — `useEffect`**
+   - `CartContext.jsx` updates `document.title` whenever the cart count changes and restores the title during cleanup.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. **Search with Auto-focus — `useRef`**
+   - `SearchBar.jsx` stores a DOM reference to the search input and focuses it after mount.
 
-## Expanding the ESLint configuration
+4. **Complex Cart State — `useReducer`**
+   - `cartReducer.js` handles ADD, INCREMENT, DECREMENT, REMOVE and CLEAR actions without mutating state.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+5. **Shared Cart Context — `useContext`**
+   - `CartContext.jsx` exposes cart data/actions to `ItemCard`, `Cart`, `Checkout`, and `App` without prop drilling.
+
+6. **Persistence + Checkout — custom hooks + cleanup**
+   - `usePersistentCart.js` persists cart state to `localStorage`.
+   - `useCheckout.js` simulates checkout with a timer and clears the timer on unmount.
+
+## Run
+
+```bash
+npm install
+npm run dev
+```
+
+Open the Vite URL shown in the terminal.
+
+## Notes
+
+- No backend is required.
+- Checkout logs one order object to the browser console.
+- Cart contents survive page refreshes via `localStorage`.

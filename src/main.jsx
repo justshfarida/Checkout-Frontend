@@ -1,15 +1,14 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import { BrowserRouter } from "react-router";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import { CartProvider } from "./context/CartContext";
+import "./styles.css";
 
-
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-            <App />
-    </BrowserRouter>
-  </StrictMode>,
-)
-//strict mode helpd to find sus code, like impure components
+    <CartProvider>
+      <App />
+    </CartProvider>
+  </StrictMode>
+);
+//CartProvider makes cart state avialable to every component
