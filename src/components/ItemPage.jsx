@@ -1,19 +1,19 @@
 import "./itemPage.css";
 import { useParams, Link } from "react-router";
+import { useState } from "react";
 import { PRODUCTS } from "../data/products";
 
-export default function ItemPage({
-  quantity,
-  setQuantity
-}) {
+export default function ItemPage({ cart, setCart }) {
   const { id } = useParams();
 
   const product = PRODUCTS.find(
     (product) => product.id === Number(id)
   );
 
+  const [quantity, setQuantity] = useState(1);
+
   if (!product) {
-    return <p>Product not found</p>;
+    return <p>Product not found.</p>;
   }
 
   function increaseQuantity() {
@@ -22,6 +22,33 @@ export default function ItemPage({
 
   function decreaseQuantity() {
     setQuantity((q) => (q > 1 ? q - 1 : 1));
+  }
+
+  function addToCart() {
+    setCart((previousCart) => {
+      const existingItem = previousCart.find(
+        (item) => item.productId === product.id
+      );
+
+      if (existingItem) {
+        return previousCart.map((item) =>
+          item.productId === product.id
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+              }
+            : item
+        );
+      }
+
+      return [
+        ...previousCart,
+        {
+          productId: product.id,
+          quantity: quantity,
+        },
+      ];
+    });
   }
 
   const total = product.price * quantity;
@@ -34,24 +61,25 @@ export default function ItemPage({
       />
 
       <h2>{product.name}</h2>
+
       <p>${product.price}</p>
 
       <div className="quantity-control">
-        <button onClick={decreaseQuantity}>
-          -
-        </button>
+        <button onClick={decreaseQuantity}>-</button>
 
         <span>{quantity}</span>
 
-        <button onClick={increaseQuantity}>
-          +
-        </button>
+        <button onClick={increaseQuantity}>+</button>
       </div>
 
       <p>Total: ${total.toFixed(2)}</p>
 
-      <Link to={`/checkout/${product.id}`}>
-        Checkout
+      <button onClick={addToCart}>
+        Add to cart
+      </button>
+
+      <Link to="/checkout">
+        Go to checkout
       </Link>
     </div>
   );

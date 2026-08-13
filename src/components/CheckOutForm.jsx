@@ -1,33 +1,40 @@
 import { useState } from "react";
-import { useParams } from "react-router";
 import { PRODUCTS } from "../data/products";
 import "./checkoutForm.css";
 
-export default function CheckoutForm({ quantity }) {
-  const { id } = useParams();
-
-  const product = PRODUCTS.find(
-    (product) => product.id === Number(id)
-  );
-
+export default function CheckoutForm({ cart, setCart }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
 
-  if (!product) {
-    return <p>Product not found.</p>;
-  }
+  const cartItems = cart.map((cartItem) => {
+    const product = PRODUCTS.find(
+      (product) => product.id === cartItem.productId
+    );
 
-  const total = product.price * quantity;
+    return {
+      ...cartItem,
+      product,
+      subtotal: product.price * cartItem.quantity,
+    };
+  });
+
+  const total = cartItems.reduce(
+    (sum, item) => sum + item.subtotal,
+    0
+  );
 
   function handleSubmit(event) {
     event.preventDefault();
 
     const order = {
-      productId: product.id,
-      productName: product.name,
-      price: product.price,
-      quantity,
+      items: cartItems.map((item) => ({
+        productId: item.product.id,
+        productName: item.product.name,
+        price: item.product.price,
+        quantity: item.quantity,
+        subtotal: item.subtotal,
+      })),
       total,
       customer: {
         name,
@@ -41,25 +48,33 @@ export default function CheckoutForm({ quantity }) {
 
   return (
     <div className="checkout-page">
-
       <div className="order-summary">
         <h2>Order Summary</h2>
 
-        <div className="summary-product">
-          <div>
-            <h3>{product.name}</h3>
-            <p>Quantity: {quantity}</p>
+        {cartItems.length === 0 && (
+          <p>Your cart is empty.</p>
+        )}
+
+        {cartItems.map((item) => (
+          <div
+            className="summary-product"
+            key={item.productId}
+          >
+            <div>
+              <h3>{item.product.name}</h3>
+
+              <p>
+                ${item.product.price.toFixed(2)}
+                {" × "}
+                {item.quantity}
+              </p>
+            </div>
+
+            <span>
+              ${item.subtotal.toFixed(2)}
+            </span>
           </div>
-
-          <span>
-            ${product.price.toFixed(2)}
-          </span>
-        </div>
-
-        <div className="summary-row">
-          <span>Subtotal</span>
-          <span>${total.toFixed(2)}</span>
-        </div>
+        ))}
 
         <div className="summary-row total-row">
           <strong>Total</strong>
@@ -100,7 +115,10 @@ export default function CheckoutForm({ quantity }) {
           }
         />
 
-        <button type="submit">
+        <button
+          type="submit"
+          disabled={cart.length === 0}
+        >
           Place order
         </button>
       </form>
