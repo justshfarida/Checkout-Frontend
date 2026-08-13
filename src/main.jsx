@@ -8,3 +8,4 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
+//strict mode helpd to find sus code, like impure components

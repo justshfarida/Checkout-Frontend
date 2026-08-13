@@ -1,7 +1,35 @@
-import ProductList from "./components/ProductList"
+import { useState } from "react";
+import { PRODUCTS } from "./data/products";
+import ItemPage from "./components/ItemPage";
+import CheckoutForm from "./components/CheckOutForm";
 
 function App() {
-  return <ProductList />
+  //
+  const [quantity, setQuantity] = useState(1);
+
+  const product = PRODUCTS[0];
+
+  return (
+    <>
+      <ItemPage
+        product={product}
+        quantity={quantity}
+        setQuantity={setQuantity}
+      />
+
+      <CheckoutForm
+        product={product}
+        quantity={quantity}
+      />
+    </>
+  );
 }
 
-export default App
+export default App;
+  //                  App
+  //             quantity = 1
+  //            /            \
+  //           ↓              ↓
+  //      ItemPage       CheckoutForm
+  //         │                │
+  //  changes quantity     reads quantity
