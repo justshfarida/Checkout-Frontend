@@ -1,35 +1,39 @@
 import { useState } from "react";
-import { PRODUCTS } from "./data/products";
 import ItemPage from "./components/ItemPage";
+import ProductList from "./components/ProductList";
 import CheckoutForm from "./components/CheckOutForm";
+import { Routes, Route } from "react-router";
 
 function App() {
-  //
   const [quantity, setQuantity] = useState(1);
 
-  const product = PRODUCTS[0];
-
   return (
-    <>
-      <ItemPage
-        product={product}
-        quantity={quantity}
-        setQuantity={setQuantity}
+    <Routes>
+      <Route
+        path="/"
+        element={<ProductList />}
       />
 
-      <CheckoutForm
-        product={product}
-        quantity={quantity}
+      <Route
+        path="/products/:id"
+        element={
+          <ItemPage
+            quantity={quantity}
+            setQuantity={setQuantity}
+          />
+        }
       />
-    </>
+
+      <Route
+        path="/checkout/:id"
+        element={
+          <CheckoutForm
+            quantity={quantity}
+          />
+        }
+      />
+    </Routes>
   );
 }
 
 export default App;
-  //                  App
-  //             quantity = 1
-  //            /            \
-  //           ↓              ↓
-  //      ItemPage       CheckoutForm
-  //         │                │
-  //  changes quantity     reads quantity
