@@ -4,7 +4,7 @@ export function useCheckout() {
   const [status, setStatus] = useState("idle");
   const timeoutRef = useRef(null);
 
-  useEffect(() => {
+  useEffect(() => { 
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);

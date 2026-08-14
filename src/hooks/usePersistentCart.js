@@ -13,8 +13,8 @@ function getInitialCart() {
 }
 
 export function usePersistentCart() {
-  const [cart, dispatch] = useReducer(cartReducer, [], getInitialCart);
-  //
+  const [cart, dispatch] = useReducer(cartReducer, [], getInitialCart); //getInitialCart-> initializer function, cart = getInitialCart();
+  //localStorage is outside React. It's a browser API.
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
   }, [cart]);

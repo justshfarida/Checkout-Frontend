@@ -3,12 +3,13 @@ import { usePersistentCart } from "../hooks/usePersistentCart";
 
 const CartContext = createContext(null);
 
-export function CartProvider({ children }) {
+export function CartProvider({ children }) { //children : Whatever components you put inside <CartProvider>...</CartProvider>.
   const [cart, dispatch] = usePersistentCart(); //custom hook
 
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0); //num of all card items
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  //modify document title when card count changes
   useEffect(() => {
     document.title = cartCount > 0
       ? `(${cartCount}) Game Items Store`
@@ -16,7 +17,7 @@ export function CartProvider({ children }) {
 
     return () => {
       document.title = "Game Items Store";
-    };
+    }; //cleanupfunction
   }, [cartCount]);
 
   const value = {

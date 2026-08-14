@@ -1,9 +1,18 @@
 export function cartReducer(state, action) {
+//   state = [
+//   { id: 1, name: "Sword", price: 10, quantity: 2 },
+//   { id: 2, name: "Shield", price: 15, quantity: 1 }
+// ];
   switch (action.type) {
     case "ADD": {
+//       dispatch({
+//   type: "ADD",
+//   item: sword
+// });
       const existing = state.find((item) => item.id === action.item.id);
 
       if (existing) {
+        //this creates new array
         return state.map((item) =>
           item.id === action.item.id
             ? { ...item, quantity: item.quantity + 1 }
@@ -15,6 +24,10 @@ export function cartReducer(state, action) {
     }
 
     case "INCREMENT":
+      // action = {
+      //   type: "INCREMENT",
+      //   id: 3
+      // };
       return state.map((item) =>
         item.id === action.id
           ? { ...item, quantity: item.quantity + 1 }

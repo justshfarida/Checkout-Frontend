@@ -78,3 +78,9 @@ export default function Checkout() {
     </section>
   );
 }
+// cart empty?    status processing?    disabled?
+// ------------------------------------------------
+// true           false                 YES
+// false          true                  YES
+// false          false                 NO
+// true           true                  YES
