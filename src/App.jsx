@@ -4,7 +4,10 @@ import { useLocalStorage } from "./hooks/useLocalStorage";
 const THEME_STORAGE_KEY = "game-items-store-theme";
 
 export default function App() {
-  const [theme, setTheme] = useLocalStorage(THEME_STORAGE_KEY, "dark");
+  const [theme, setTheme] = useLocalStorage(
+    THEME_STORAGE_KEY,
+    "light"
+  );
 
   function toggleTheme() {
     setTheme((currentTheme) =>
@@ -13,8 +16,15 @@ export default function App() {
   }
 
   return (
-    <div className={`page ${theme}`} id="top">
-      <StorePage theme={theme} onThemeToggle={toggleTheme} />
+    <div
+      className="page"
+      data-theme={theme}
+      id="top"
+    >
+      <StorePage
+        theme={theme}
+        onThemeToggle={toggleTheme}
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import ItemCard from "./ItemCard";
+import "./ItemGrid.css";
 
 export default function ItemGrid({ items }) {
   if (items.length === 0) {

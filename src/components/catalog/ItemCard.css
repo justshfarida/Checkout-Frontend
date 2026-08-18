@@ -1,0 +1,6 @@
+.item-card{
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    border-radius: var(--radius-card);
+}

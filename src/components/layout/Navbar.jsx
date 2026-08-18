@@ -1,21 +1,54 @@
-export default function Navbar({ cartCount, isCartOpen, onCartToggle }) {
+import { Link } from "react-router";
+
+import "./Navbar.css";
+
+export default function Navbar({
+  cartCount,
+  isCartOpen,
+  onCartToggle,
+}) {
   return (
-    <nav className="navbar">
-      <a className="store-name" href="#top" aria-label="Game Items Store home">
-        Game Items Store
-      </a>
+    <header className="navbar">
+      <Link to="/" className="navbar__brand">
+        <img
+        className="navbar__logo"
+        src="/images/Mark.png"
+        alt="Xsolla"
+      />
+        <span>Xsolla Store</span>
+      </Link>
+
+      <nav className="navbar__nav">
+        <Link to="/" className="navbar__link">
+          Store
+        </Link>
 
       <button
-        className="nav-cart-button"
-        type="button"
-        onClick={onCartToggle}
-        aria-expanded={isCartOpen}
-        aria-controls="cart-popover"
-      >
-        <span className="cart-icon" aria-hidden="true">🛒</span>
-        <span>Cart</span>
-        <span className="cart-badge">{cartCount}</span>
+          className="navbar__cart"
+          type="button"
+          onClick={onCartToggle}
+          aria-expanded={isCartOpen}
+          aria-controls="cart-popover"
+        >
+          <img
+            className="navbar__cart-icon"
+            src="/images/CartIcon.png"
+            alt=""
+          />
+
+          <span className="navbar__cart-text">Cart</span>
+
+          {cartCount > 0 && (
+            <span className="navbar__cart-badge">
+              {cartCount}
+            </span>
+          )}
       </button>
-    </nav>
+
+        <Link to="/login" className="navbar__login">
+          Login
+        </Link>
+      </nav>
+    </header>
   );
 }

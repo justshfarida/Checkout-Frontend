@@ -1,0 +1,12 @@
+.store-page {
+  min-height: 100vh;
+  background: var(--color-background);
+}
+
+.store-page__main {
+  padding: 48px;
+}
+
+.store-page__catalog {
+  width: 100%;
+}

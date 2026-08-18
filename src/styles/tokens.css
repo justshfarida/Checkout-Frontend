@@ -1,0 +1,151 @@
+:root {
+  /* =========================
+     COLORS
+     ========================= */
+
+  /* Brand / interactive */
+  --color-accent: #80eaff;
+  --color-accent-hover: #b2f2ff;
+
+  /* Prices / totals */
+  --color-price: #00a2c2;
+
+  /* Primary text */
+  --color-text: #141d1f;
+
+  /* Secondary / muted text */
+  --color-text-muted: #5b5d56;
+
+
+  /* =========================
+     SURFACES
+     ========================= */
+
+  --color-background: #f4f4f1;
+  --color-surface: #ffffff;
+
+  /* Inputs and subtle backgrounds */
+  --color-surface-muted: #f7f7f5;
+
+
+  /* =========================
+     BORDERS
+     ========================= */
+
+  --color-border: #e7e7e7;
+  --color-border-strong: #d5d5d0;
+
+
+  /* =========================
+     STATES
+     ========================= */
+
+  --color-error: #d92d20;
+  --color-error-background: #fff4f2;
+
+  --color-disabled-background: #e8e8e5;
+  --color-disabled-text: #9a9b96;
+
+
+  /* =========================
+     TYPOGRAPHY
+     ========================= */
+
+  --font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+
+  /* =========================
+     SPACING
+     ========================= */
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+
+  /* =========================
+     BORDER RADIUS
+     ========================= */
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+
+  /* =========================
+     SHADOWS
+     ========================= */
+
+  --shadow-card:
+    0 4px 16px rgba(20, 29, 31, 0.08);
+
+  --shadow-popover:
+    0 12px 32px rgba(20, 29, 31, 0.14);
+
+
+  /* =========================
+     LAYOUT
+     ========================= */
+
+  --page-max-width: 1120px;
+  --page-padding: 24px;
+
+  --navbar-height: 64px;
+
+
+  /* =========================
+     TRANSITIONS
+     ========================= */
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+
+/* =========================
+   DARK THEME
+   ========================= */
+
+[data-theme="dark"] {
+  --color-background: #101617;
+  --color-surface: #182022;
+  --color-surface-muted: #20292b;
+
+  --color-text: #f5f7f7;
+  --color-text-muted: #a8afad;
+
+  --color-border: #303a3c;
+  --color-border-strong: #465153;
+
+  --color-disabled-background: #303738;
+  --color-disabled-text: #777f80;
+
+  --shadow-card:
+    0 4px 16px rgba(0, 0, 0, 0.2);
+
+  --shadow-popover:
+    0 12px 32px rgba(0, 0, 0, 0.3);
+}
