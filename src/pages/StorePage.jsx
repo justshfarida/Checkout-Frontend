@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { GAME_ITEMS } from "../data/items";
+import { STORE_ITEMS } from "../data/items";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -34,7 +34,7 @@ export default function StorePage({ theme, onThemeToggle }) {
 
       <main className="store-page__main">
         <section className="store-page__catalog">
-          <ItemGrid items={GAME_ITEMS} />
+          <ItemGrid items={STORE_ITEMS} />
         </section>
       </main>
 

@@ -1,9 +1,15 @@
+import "./Footer.css";
+
 export default function Footer({ theme, onThemeToggle }) {
   return (
-    <footer>
-      <span>React Hooks Project</span>
+    <footer className="footer">
+      <span className="footer__text">React Hooks Project</span>
 
-      <button className="theme-toggle" type="button" onClick={onThemeToggle}>
+      <button
+        className="footer__theme-toggle"
+        type="button"
+        onClick={onThemeToggle}
+      >
         {theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode"}
       </button>
     </footer>

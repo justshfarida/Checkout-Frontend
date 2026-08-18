@@ -5,24 +5,26 @@ export default function ItemCard({ item }) {
   const { addToCart } = useCart();
 
   return (
-    <article className="item-card">
-      <img
-        className="item-card__image"
-        src={item.image}
-        alt={item.name}
-      />
+    <article
+      className={`item-card ${
+        item.soldOut ? "item-card--sold-out" : ""
+      }`}
+    >
+      <div
+        className={`item-card__visual item-card__visual--${item.variant}`}
+      >
+        <span className="item-card__initial">
+          {item.initial}
+        </span>
+      </div>
 
       <div className="item-card__body">
-        <span className="item-card__rarity">
-          {item.rarity}
-        </span>
-
         <h3 className="item-card__title">
           {item.name}
         </h3>
 
-        <p className="item-card__category">
-          {item.category}
+        <p className="item-card__description">
+          {item.description}
         </p>
 
         <div className="item-card__footer">
@@ -32,9 +34,11 @@ export default function ItemCard({ item }) {
 
           <button
             className="item-card__button"
+            type="button"
+            disabled={item.soldOut}
             onClick={() => addToCart(item)}
           >
-            Add to Cart
+            {item.soldOut ? "Sold out" : "Add to cart"}
           </button>
         </div>
       </div>

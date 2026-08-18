@@ -10,3 +10,15 @@
 .store-page__catalog {
   width: 100%;
 }
+
+@media (max-width: 768px) {
+  .store-page__main {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 390px) {
+  .store-page__main {
+    padding: 16px;
+  }
+}
