@@ -1,16 +1,55 @@
-# React + Vite
+# Game Items Store
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React homework project demonstrating core hooks, custom hooks, Context, reducer-based state, and localStorage persistence.
 
-Currently, two official plugins are available:
+## Architecture
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```text
+src/
+├── App.jsx                    # App-level theme persistence
+├── main.jsx                   # React entry point + providers
+├── pages/
+│   └── StorePage.jsx          # Store page composition + page UI state
+├── components/
+│   ├── layout/
+│   │   ├── Navbar.jsx
+│   │   └── Footer.jsx
+│   ├── catalog/
+│   │   ├── SearchBar.jsx
+│   │   ├── ItemGrid.jsx
+│   │   └── ItemCard.jsx
+│   ├── cart/
+│   │   └── Cart.jsx
+│   └── checkout/
+│       └── Checkout.jsx
+├── context/
+│   └── CartContext.jsx        # Shared cart state and cart actions
+├── reducers/
+│   └── cartReducer.js         # Pure cart state transitions
+├── hooks/
+│   ├── useLocalStorage.js     # Persistence for cart + theme
+│   └── useCheckout.js         # Checkout behavior
+├── data/
+│   └── items.js               # Static product data
+└── styles.css
+```
 
-## React Compiler
+## Hook responsibilities
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `useState`: search text, cart popover visibility, checkout form state.
+- `useEffect`: cart persistence, document title, input focus, timer cleanup.
+- `useReducer`: cart add/remove/increment/decrement/clear state transitions.
+- `useContext`: makes cart state/actions available throughout the app.
+- `useLocalStorage`: reusable persistence hook used for **both cart and theme**.
+- `useCheckout`: custom hook for simulated checkout status.
 
-## Expanding the ESLint configuration
+## Cart persistence flow
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+`CartContext` reads the initial saved cart with `useLocalStorage`, initializes `useReducer` with it, and syncs reducer changes back to localStorage with `useEffect`.
+
+## Run
+
+```bash
+npm install
+npm run dev
+```

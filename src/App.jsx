@@ -1,16 +1,20 @@
-import ProductList from "./components/ProductList"
-// import Summary from './components/Summary'
-// import './components/checkout.css'
+import StorePage from "./pages/StorePage";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
-function App() {
-  // DEMO 2 — uncomment this block, delete the return below
+const THEME_STORAGE_KEY = "game-items-store-theme";
+
+export default function App() {
+  const [theme, setTheme] = useLocalStorage(THEME_STORAGE_KEY, "dark");
+
+  function toggleTheme() {
+    setTheme((currentTheme) =>
+      currentTheme === "dark" ? "light" : "dark"
+    );
+  }
+
   return (
-    <div className="checkout">
-      <ProductList />
-      {/*<Summary />*/}
+    <div className={`page ${theme}`} id="top">
+      <StorePage theme={theme} onThemeToggle={toggleTheme} />
     </div>
-  )
-
+  );
 }
-
-export default App
