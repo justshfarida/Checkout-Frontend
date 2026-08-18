@@ -1,0 +1,73 @@
+import { useCart } from "../../context/CartContext";
+
+import "./CartItem.css";
+
+export default function CartItem({ item }) {
+  const {
+    increaseQuantity,
+    decreaseQuantity,
+    removeFromCart,
+  } = useCart();
+
+  const lineTotal = item.price * item.quantity;
+
+  return (
+    <article className="cart-item">
+      <div
+        className="cart-item__visual"
+        style={{ background: item.gradient }}
+      >
+        <span className="cart-item__initial">
+          {item.initial}
+        </span>
+      </div>
+
+      <div className="cart-item__info">
+        <h2 className="cart-item__name">
+          {item.name}
+        </h2>
+
+        <p className="cart-item__stock">
+          {item.stock} in stock
+        </p>
+      </div>
+
+      <div className="cart-item__quantity">
+        <button
+          className="cart-item__quantity-button"
+          type="button"
+          onClick={() => decreaseQuantity(item.id)}
+          aria-label={`Decrease ${item.name} quantity`}
+        >
+          −
+        </button>
+
+        <span className="cart-item__quantity-value">
+          {item.quantity}
+        </span>
+
+        <button
+          className="cart-item__quantity-button"
+          type="button"
+          onClick={() => increaseQuantity(item.id)}
+          aria-label={`Increase ${item.name} quantity`}
+        >
+          +
+        </button>
+      </div>
+
+      <strong className="cart-item__total">
+        ${lineTotal.toFixed(2)}
+      </strong>
+
+      <button
+        className="cart-item__remove"
+        type="button"
+        onClick={() => removeFromCart(item.id)}
+        aria-label={`Remove ${item.name} from cart`}
+      >
+        ×
+      </button>
+    </article>
+  );
+}

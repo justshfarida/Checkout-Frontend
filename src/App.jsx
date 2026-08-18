@@ -1,4 +1,9 @@
+import { Routes, Route } from "react-router";
+
 import StorePage from "./pages/StorePage";
+import LoginPage from "./pages/LoginPage";
+import CheckoutPage from "./pages/CheckoutPage";
+
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
 const THEME_STORAGE_KEY = "game-items-store-theme";
@@ -16,15 +21,28 @@ export default function App() {
   }
 
   return (
-    <div
-      className="page"
-      data-theme={theme}
-      id="top"
-    >
-      <StorePage
-        theme={theme}
-        onThemeToggle={toggleTheme}
-      />
+    <div className={`page ${theme}`}>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <StorePage
+              theme={theme}
+              onThemeToggle={toggleTheme}
+            />
+          }
+        />
+
+        <Route
+          path="/login"
+          element={<LoginPage />}
+        />
+
+        <Route
+          path="/checkout"
+          element={<CheckoutPage />}
+        />
+      </Routes>
     </div>
   );
 }
