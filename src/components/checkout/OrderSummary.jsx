@@ -2,26 +2,30 @@ import { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { useCheckout } from "../../hooks/useCheckout";
 
-export default function Checkout() {
+import "./OrderSummary.css";
+
+export default function OrderSummary() {
   const { cart, total, clearCart } = useCart();
   const { status, checkout, reset } = useCheckout();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+
+  const [promoCode, setPromoCode] = useState("XSOLLA10");
 
   function handleSubmit(event) {
     event.preventDefault();
+
     if (cart.length === 0) return;
 
     const order = {
-      customer: { name, email },
-      items: cart.map(({ id, name: itemName, price, quantity }) => ({
+      items: cart.map(({ id, name, price, quantity }) => ({
         id,
-        name: itemName,
+        name,
         price,
         quantity,
-        subtotal: price * quantity
+        subtotal: price * quantity,
       })),
-      total
+      promoCode,
+      delivery: "Free",
+      total,
     };
 
     checkout(order);
@@ -29,58 +33,99 @@ export default function Checkout() {
 
   function startNewOrder() {
     clearCart();
-    setName("");
-    setEmail("");
+    setPromoCode("");
     reset();
   }
 
   if (status === "success") {
     return (
-      <section className="checkout-card success-card">
-        <div className="success-icon">✓</div>
-        <h2>Order complete</h2>
-        <p>Your game items are ready. The order object was logged to the console.</p>
-        <button onClick={startNewOrder}>Start a new order</button>
-      </section>
+      <aside className="order-summary order-summary--success">
+        <div className="order-summary__success-icon">✓</div>
+
+        <h2 className="order-summary__title">
+          Order complete
+        </h2>
+
+        <p className="order-summary__message">
+          Your order has been placed successfully.
+        </p>
+
+        <button
+          className="order-summary__button"
+          type="button"
+          onClick={startNewOrder}
+        >
+          Start a new order
+        </button>
+      </aside>
     );
   }
 
   return (
-    <section className="checkout-card">
-      <p className="eyebrow">Final step</p>
-      <h2>Checkout</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Name
-          <input
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Player name"
-            required
-          />
+    <aside className="order-summary">
+      <h2 className="order-summary__title">
+        Order summary
+      </h2>
+
+      <div className="order-summary__row">
+        <span>Subtotal</span>
+        <strong>${total.toFixed(2)}</strong>
+      </div>
+
+      <div className="order-summary__row">
+        <span>Delivery</span>
+        <strong>Free</strong>
+      </div>
+
+      <form
+        className="order-summary__form"
+        onSubmit={handleSubmit}
+      >
+        <label
+          className="order-summary__label"
+          htmlFor="promo-code"
+        >
+          Promo code
         </label>
 
-        <label>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="player@example.com"
-            required
-          />
-        </label>
+        <input
+          id="promo-code"
+          className="order-summary__input"
+          type="text"
+          value={promoCode}
+          onChange={(event) =>
+            setPromoCode(event.target.value)
+          }
+          placeholder="XSOLLA10"
+        />
 
-        <button type="submit" disabled={cart.length === 0 || status === "processing"}>
-          {status === "processing" ? "Processing..." : `Checkout · $${total.toFixed(2)}`}
+        <div className="order-summary__divider" />
+
+        <div className="order-summary__total">
+          <strong>Total</strong>
+
+          <strong className="order-summary__total-price">
+            ${total.toFixed(2)}
+          </strong>
+        </div>
+
+        <button
+          className="order-summary__button"
+          type="submit"
+          disabled={
+            cart.length === 0 ||
+            status === "processing"
+          }
+        >
+          {status === "processing"
+            ? "Processing..."
+            : "Place order"}
         </button>
       </form>
-    </section>
+
+      <p className="order-summary__terms">
+        By placing this order you agree to the Terms of Service.
+      </p>
+    </aside>
   );
 }
-// cart empty?    status processing?    disabled?
-// ------------------------------------------------
-// true           false                 YES
-// false          true                  YES
-// false          false                 NO
-// true           true                  YES

@@ -25,14 +25,14 @@ export default function LoginPage() {
   return (
     <main className="login-page">
       <div className="login-page__content">
-        <Link to="/" className="login-page__brand">
+        <div className="login-page__brand">
           <img
             className="login-page__logo"
             src="/images/Mark.png"
             alt=""
           />
           <span>Xsolla Store</span>
-        </Link>
+        </div>
 
         <section className="login-card">
           <h1 className="login-card__title">

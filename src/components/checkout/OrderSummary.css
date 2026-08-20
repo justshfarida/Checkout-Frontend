@@ -1,0 +1,11 @@
+.order-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  width: 360px;
+  padding: 20px;
+
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+}

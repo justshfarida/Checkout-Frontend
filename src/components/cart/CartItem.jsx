@@ -14,8 +14,7 @@ export default function CartItem({ item }) {
   return (
     <article className="cart-item">
       <div
-        className="cart-item__visual"
-        style={{ background: item.gradient }}
+        className={`cart-item__visual cart-item__visual--${item.variant}`}
       >
         <span className="cart-item__initial">
           {item.initial}
