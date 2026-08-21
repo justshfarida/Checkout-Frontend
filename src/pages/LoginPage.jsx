@@ -1,25 +1,80 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
+
+import api from "../api/client";
+import { useAuth } from "../context/AuthContext";
 
 import "./LoginPage.css";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("you@example.com");
-  const [password, setPassword] = useState("password");
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  function handleSubmit(event) {
+  const { login } = useAuth();
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+
+    setForm((previousForm) => ({
+      ...previousForm,
+      [name]: value,
+    }));
+  }
+
+  async function handleSubmit(event) {
     event.preventDefault();
 
-    if (!email || !password) {
-      setError("Email or password is incorrect.");
+    if (!form.email || !form.password) {
+      setError("Email and password are required.");
       return;
     }
 
-    setError("");
-    navigate("/checkout");
+    try {
+      setIsLoading(true);
+      setError("");
+
+      const response = await api.post("/login", {
+        email: form.email,
+        password: form.password,
+      });
+
+      login(response.data.jwt);
+
+      localStorage.setItem(
+        "refreshToken",
+        response.data.refresh_token
+      );
+
+      navigate("/checkout");
+    } catch (error) {
+      console.error(error);
+
+      if (!error.response) {
+        setError("Cannot reach the server.");
+        return;
+      }
+
+      if (error.response.status === 401) {
+        setError("Email or password is incorrect.");
+        return;
+      }
+
+      if (error.response.status === 422) {
+        setError("User does not exist.");
+        return;
+      }
+
+      setError("Could not sign in.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -31,6 +86,7 @@ export default function LoginPage() {
             src="/images/Mark.png"
             alt=""
           />
+
           <span>Xsolla Store</span>
         </div>
 
@@ -59,22 +115,13 @@ export default function LoginPage() {
               </span>
 
               <input
-                className={`login-card__input ${
-                  error ? "login-card__input--error" : ""
-                }`}
+                className="login-card__input"
                 type="email"
-                value={email}
-                onChange={(event) =>
-                  setEmail(event.target.value)
-                }
+                name="email"
+                value={form.email}
+                onChange={handleChange}
                 placeholder="you@example.com"
               />
-
-              {error && (
-                <span className="login-card__field-error">
-                  {error}
-                </span>
-              )}
             </label>
 
             <label className="login-card__field">
@@ -85,10 +132,9 @@ export default function LoginPage() {
               <input
                 className="login-card__input"
                 type="password"
-                value={password}
-                onChange={(event) =>
-                  setPassword(event.target.value)
-                }
+                name="password"
+                value={form.password}
+                onChange={handleChange}
                 placeholder="Enter your password"
               />
             </label>
@@ -96,8 +142,11 @@ export default function LoginPage() {
             <button
               className="login-card__submit"
               type="submit"
+              disabled={isLoading}
             >
-              Sign in
+              {isLoading
+                ? "Signing in..."
+                : "Sign in"}
             </button>
           </form>
 
