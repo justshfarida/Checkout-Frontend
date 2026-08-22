@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 import api from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 import "./LoginPage.css";
 
@@ -18,6 +19,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const { login } = useAuth();
+  const { syncGuestCartToServer } = useCart();
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -51,6 +53,7 @@ export default function LoginPage() {
         "refreshToken",
         response.data.refresh_token
       );
+      await syncGuestCartToServer();
 
       navigate("/checkout");
     } catch (error) {

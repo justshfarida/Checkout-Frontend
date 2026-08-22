@@ -4,6 +4,8 @@ export function cartReducer(state, action) {
 //   { id: 2, name: "Shield", price: 15, quantity: 1 }
 // ];
   switch (action.type) {
+    case "SET_CART":
+      return action.cart;
     case "ADD": {
 //       dispatch({
 //   type: "ADD",

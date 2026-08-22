@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ItemGrid from "../components/catalog/ItemGrid";
-import CartPopover from "../components/cart/CartPopover";
 
 import { useCart } from "../context/CartContext";
 
@@ -21,16 +21,16 @@ const variants = [
 ];
 
 export default function StorePage({ theme, onThemeToggle }) {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   const { cartCount } = useCart();
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    async function fetchItems() { //the function with async return Promise
+    async function fetchItems() {
       try {
         setIsLoading(true);
         setError("");
@@ -46,15 +46,16 @@ export default function StorePage({ theme, onThemeToggle }) {
         const formattedItems = data.map((item, index) => ({
           ...item,
 
-          // backend price is stored in cents
           price: item.price / 100,
 
-          // UI-specific values
-          initial: item.name?.charAt(0).toUpperCase() || "?",
-          variant: variants[index % variants.length],
+          initial:
+            item.name?.charAt(0).toUpperCase() || "?",
 
-          // backend has stock instead of soldOut
-          soldOut: item.stock <= 0,
+          variant:
+            variants[index % variants.length],
+
+          soldOut:
+            item.stock <= 0,
         }));
 
         setItems(formattedItems);
@@ -70,19 +71,16 @@ export default function StorePage({ theme, onThemeToggle }) {
     fetchItems();
   }, []);
 
-  function handleCartToggle() {
-    setIsCartOpen((open) => !open);
+  function handleCartClick() {
+    navigate("/checkout");
   }
 
   return (
     <div className="store-page">
       <Navbar
         cartCount={cartCount}
-        isCartOpen={isCartOpen}
-        onCartToggle={handleCartToggle}
+        onCartToggle={handleCartClick}
       />
-
-      {isCartOpen && <CartPopover />}
 
       <main className="store-page__main">
         <section className="store-page__catalog">

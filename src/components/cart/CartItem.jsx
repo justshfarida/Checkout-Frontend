@@ -4,9 +4,9 @@ import "./CartItem.css";
 
 export default function CartItem({ item }) {
   const {
-    increaseQuantity,
-    decreaseQuantity,
-    removeFromCart,
+    increment,
+    decrement,
+    remove,
   } = useCart();
 
   const lineTotal = item.price * item.quantity;
@@ -35,7 +35,7 @@ export default function CartItem({ item }) {
         <button
           className="cart-item__quantity-button"
           type="button"
-          onClick={() => decreaseQuantity(item.id)}
+          onClick={() => decrement(item.id)}
           aria-label={`Decrease ${item.name} quantity`}
         >
           −
@@ -48,7 +48,7 @@ export default function CartItem({ item }) {
         <button
           className="cart-item__quantity-button"
           type="button"
-          onClick={() => increaseQuantity(item.id)}
+          onClick={() => increment(item.id)}
           aria-label={`Increase ${item.name} quantity`}
         >
           +
@@ -62,7 +62,7 @@ export default function CartItem({ item }) {
       <button
         className="cart-item__remove"
         type="button"
-        onClick={() => removeFromCart(item.id)}
+        onClick={() => remove(item.id)}
         aria-label={`Remove ${item.name} from cart`}
       >
         ×

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { useCheckout } from "../../hooks/useCheckout";
-
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router";
 import "./OrderSummary.css";
 
 export default function OrderSummary() {
@@ -9,10 +10,20 @@ export default function OrderSummary() {
   const { status, checkout, reset } = useCheckout();
 
   const [promoCode, setPromoCode] = useState("XSOLLA10");
+  const navigate = useNavigate();
 
+  const { isAuthenticated } =
+  useAuth();
   function handleSubmit(event) {
     event.preventDefault();
 
+
+    if (cart.length === 0) return;
+
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
     if (cart.length === 0) return;
 
     const order = {
