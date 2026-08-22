@@ -1,22 +1,38 @@
 import { useState } from "react";
-import { useCart } from "../../context/CartContext";
-import { useCheckout } from "../../hooks/useCheckout";
-import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router";
+
+import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
+import { useCheckout } from "../../hooks/useCheckout";
+
 import "./OrderSummary.css";
 
 export default function OrderSummary() {
-  const { cart, total, clearCart } = useCart();
-  const { status, checkout, reset } = useCheckout();
+  const {
+    cart,
+    total,
+    clearCart,
+  } = useCart();
 
-  const [promoCode, setPromoCode] = useState("XSOLLA10");
+  const {
+    isAuthenticated,
+  } = useAuth();
+
+  const {
+    status,
+    error,
+    order,
+    checkout,
+    reset,
+  } = useCheckout();
+
   const navigate = useNavigate();
 
-  const { isAuthenticated } =
-  useAuth();
-  function handleSubmit(event) {
-    event.preventDefault();
+  const [promoCode, setPromoCode] =
+    useState("XSOLLA10");
 
+  async function handleSubmit(event) {
+    event.preventDefault();
 
     if (cart.length === 0) return;
 
@@ -24,22 +40,15 @@ export default function OrderSummary() {
       navigate("/login");
       return;
     }
-    if (cart.length === 0) return;
 
-    const order = {
-      items: cart.map(({ id, name, price, quantity }) => ({
-        id,
-        name,
-        price,
-        quantity,
-        subtotal: price * quantity,
-      })),
-      promoCode,
-      delivery: "Free",
-      total,
-    };
+    const result = await checkout(
+      cart,
+      total
+    );
 
-    checkout(order);
+    if (result) {
+      clearCart();
+    }
   }
 
   function startNewOrder() {
@@ -51,7 +60,9 @@ export default function OrderSummary() {
   if (status === "success") {
     return (
       <aside className="order-summary order-summary--success">
-        <div className="order-summary__success-icon">✓</div>
+        <div className="order-summary__success-icon">
+          ✓
+        </div>
 
         <h2 className="order-summary__title">
           Order complete
@@ -60,6 +71,12 @@ export default function OrderSummary() {
         <p className="order-summary__message">
           Your order has been placed successfully.
         </p>
+
+        {order && (
+          <p className="order-summary__message">
+            Order #{order.id}
+          </p>
+        )}
 
         <button
           className="order-summary__button"
@@ -80,11 +97,15 @@ export default function OrderSummary() {
 
       <div className="order-summary__row">
         <span>Subtotal</span>
-        <strong>${total.toFixed(2)}</strong>
+
+        <strong>
+          ${total.toFixed(2)}
+        </strong>
       </div>
 
       <div className="order-summary__row">
         <span>Delivery</span>
+
         <strong>Free</strong>
       </div>
 
@@ -119,6 +140,12 @@ export default function OrderSummary() {
             ${total.toFixed(2)}
           </strong>
         </div>
+
+        {error && (
+          <p className="order-summary__error">
+            {error}
+          </p>
+        )}
 
         <button
           className="order-summary__button"
