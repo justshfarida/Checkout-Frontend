@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
@@ -9,15 +10,13 @@ import api from "../api/client";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  //this stores accessToken in reactState
-  const [accessToken, setAccessToken] =
-    useState(null);
+  const [accessToken, setAccessToken] = useState(null);
 
   function login(token) {
     setAccessToken(token);
 
     api.defaults.headers.common.Authorization =
-      `Bearer ${token}`; //every request after that login carries this header
+      `Bearer ${token}`;
   }
 
   function logout() {
@@ -28,7 +27,25 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("refreshToken");
   }
 
-  const isAuthenticated = Boolean(accessToken); //if there is jwt it is true then
+  useEffect(() => {
+    const interceptor = api.interceptors.response.use(
+      (response) => response,
+
+      (error) => {
+        if (error.response?.status === 401) {
+          logout();
+        }
+
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      api.interceptors.response.eject(interceptor);
+    };
+  }, []);
+
+  const isAuthenticated = Boolean(accessToken);
 
   return (
     <AuthContext.Provider

@@ -175,14 +175,28 @@ export function CartProvider({ children }) {
     const newQuantity = existing
       ? existing.quantity + 1
       : 1;
-
-    await api.patch(
+    try{
+        await api.patch(
       `/user/cart/items/${item.id}`,
       {
         quantity: newQuantity,
       }
     );
 
+    }
+    catch(error){
+       if (error.response?.status === 401) {
+      dispatch({
+        type: "ADD",
+        item,
+      });
+
+      return;
+    }
+    throw error;
+
+  }
+    
     /*
      * Backend succeeded, now update UI.
      */
