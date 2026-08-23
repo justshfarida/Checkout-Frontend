@@ -143,4 +143,33 @@
 }
 .login-card__signup-link{
   text-decoration: none;
+  color: var(--color-price);
+  font-weight: 600;
+}
+.login-card__signup{
+  font-size:12px;
+  margin: 0px;
+
+}
+.login-card__error-banner{
+  background-color: #FBEDEE;
+  color: #C62B33;
+  font-weight: 600;
+  margin:0px;
+  padding: 11px 14px ;
+  border-radius: 8px;
+}
+.login-card__input--error {
+  border-color: #c62b33;
+}
+
+.login-card__input--error:focus {
+  border-color: #c62b33;
+}
+
+.login-card__field-error {
+  color: #c62b33;
+
+  font-size: 12px;
+  line-height: 1.3;
 }

@@ -182,7 +182,7 @@
    ========================= */
 
 .item-card__description {
-  margin: 8px 0 0;
+  margin: 4px 0 0;
 
   color: var(--color-text-muted);
 
@@ -202,7 +202,7 @@
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
-  padding-top: var(--space-lg);
+  padding-top: var(--space-md);
 }
 
 
@@ -214,7 +214,7 @@
   color: var(--color-price);
 
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1;
 }
@@ -228,7 +228,7 @@
   border: 0;
   border-radius: 8px;
 
-  padding: 10px 16px;
+  padding: 9px 20px;
 
   background: var(--color-accent);
   color: var(--color-text);

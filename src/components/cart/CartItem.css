@@ -1,10 +1,26 @@
+/* ========================================
+   CART ITEM
+======================================== */
+
 .cart-item {
-  display: flex;
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    auto
+    auto;
+
+  grid-template-areas:
+    "product quantity total remove";
+
   align-items: center;
-  gap: 16px;
+  gap: 24px;
 
   min-height: 104px;
   padding: 16px 18px;
+
+  box-sizing: border-box;
 
   background: var(--color-surface);
 
@@ -16,7 +32,25 @@
 }
 
 
-/* PRODUCT VISUAL */
+/* ========================================
+   PRODUCT
+   visual + name/stock wrapper
+======================================== */
+
+.cart-item__product {
+  grid-area: product;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  min-width: 0;
+}
+
+
+/* ========================================
+   PRODUCT VISUAL
+======================================== */
 
 .cart-item__visual {
   display: flex;
@@ -92,7 +126,9 @@
 }
 
 
-/* INITIAL */
+/* ========================================
+   INITIAL
+======================================== */
 
 .cart-item__initial {
   color: #ffffff;
@@ -103,10 +139,11 @@
 }
 
 
-/* INFO */
+/* ========================================
+   PRODUCT INFO
+======================================== */
 
 .cart-item__info {
-  flex: 1;
   min-width: 0;
 }
 
@@ -135,9 +172,13 @@
 }
 
 
-/* QUANTITY */
+/* ========================================
+   QUANTITY
+======================================== */
 
 .cart-item__quantity {
+  grid-area: quantity;
+
   display: flex;
   align-items: center;
   gap: 12px;
@@ -159,7 +200,10 @@
   color: var(--color-text);
 
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-md);
+  border-radius: 8px;
+
+  font: inherit;
+  font-size: 14px;
 
   cursor: pointer;
 
@@ -175,21 +219,23 @@
 .cart-item__quantity-value {
   min-width: 16px;
 
-  text-align: center;
-
   color: var(--color-text);
 
   font-size: 14px;
   font-weight: 600;
+
+  text-align: center;
 }
 
 
-/* LINE TOTAL */
+/* ========================================
+   PRICE
+======================================== */
 
 .cart-item__total {
-  min-width: 72px;
+  grid-area: total;
 
-  flex-shrink: 0;
+  min-width: 72px;
 
   color: var(--color-text);
 
@@ -200,10 +246,12 @@
 }
 
 
-/* REMOVE */
+/* ========================================
+   REMOVE
+======================================== */
 
 .cart-item__remove {
-  flex-shrink: 0;
+  grid-area: remove;
 
   padding: 4px;
 
@@ -212,6 +260,7 @@
   background: transparent;
   color: var(--color-text-muted);
 
+  font: inherit;
   font-size: 20px;
   line-height: 1;
 
@@ -223,43 +272,46 @@
 }
 
 
-/* MOBILE */
+/* ========================================
+   MOBILE
+======================================== */
 
 @media (max-width: 530px) {
-  .cart-item {
-    display: grid;
 
-    grid-template-columns: 48px minmax(0, 1fr) auto auto;
+  .cart-item {
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto
+      auto;
 
     grid-template-areas:
-      "visual info total remove"
-      "visual quantity total remove";
+      "product product product"
+      "quantity total remove";
+
+    align-items: center;
 
     column-gap: 12px;
-    row-gap: 8px;
+    row-gap: 12px;
 
-    min-height: 88px;
+    min-height: auto;
 
-    padding: 12px;
+    padding: 16px;
+  }
+
+
+  /* PRODUCT */
+
+  .cart-item__product {
+    gap: 12px;
   }
 
   .cart-item__visual {
-    grid-area: visual;
-
     width: 48px;
     height: 48px;
-
-    align-self: start;
   }
 
   .cart-item__initial {
     font-size: 20px;
-  }
-
-  .cart-item__info {
-    grid-area: info;
-
-    align-self: end;
   }
 
   .cart-item__name {
@@ -272,12 +324,13 @@
     font-size: 11px;
   }
 
+
+  /* QUANTITY */
+
   .cart-item__quantity {
-    grid-area: quantity;
+    justify-self: start;
 
-    gap: 8px;
-
-    align-self: start;
+    gap: 10px;
   }
 
   .cart-item__quantity-button {
@@ -290,25 +343,27 @@
   }
 
   .cart-item__quantity-value {
-    min-width: 12px;
+    min-width: 14px;
 
     font-size: 12px;
   }
 
+
+  /* PRICE */
+
   .cart-item__total {
-    grid-area: total;
+    min-width: auto;
 
-    min-width: 58px;
-
-    align-self: center;
+    justify-self: end;
 
     font-size: 13px;
   }
 
-  .cart-item__remove {
-    grid-area: remove;
 
-    align-self: center;
+  /* REMOVE */
+
+  .cart-item__remove {
+    justify-self: end;
 
     padding: 2px;
 

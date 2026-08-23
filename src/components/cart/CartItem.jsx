@@ -13,24 +13,29 @@ export default function CartItem({ item }) {
 
   return (
     <article className="cart-item">
-      <div
-        className={`cart-item__visual cart-item__visual--${item.variant}`}
-      >
-        <span className="cart-item__initial">
-          {item.initial}
-        </span>
+
+      {/* Product image + information */}
+      <div className="cart-item__product">
+        <div
+          className={`cart-item__visual cart-item__visual--${item.variant}`}
+        >
+          <span className="cart-item__initial">
+            {item.initial}
+          </span>
+        </div>
+
+        <div className="cart-item__info">
+          <h2 className="cart-item__name">
+            {item.name}
+          </h2>
+
+          <p className="cart-item__stock">
+            {item.stock} in stock
+          </p>
+        </div>
       </div>
 
-      <div className="cart-item__info">
-        <h2 className="cart-item__name">
-          {item.name}
-        </h2>
-
-        <p className="cart-item__stock">
-          {item.stock} in stock
-        </p>
-      </div>
-
+      {/* Quantity */}
       <div className="cart-item__quantity">
         <button
           className="cart-item__quantity-button"
@@ -55,10 +60,12 @@ export default function CartItem({ item }) {
         </button>
       </div>
 
+      {/* Price */}
       <strong className="cart-item__total">
         ${lineTotal.toFixed(2)}
       </strong>
 
+      {/* Remove */}
       <button
         className="cart-item__remove"
         type="button"
@@ -67,6 +74,7 @@ export default function CartItem({ item }) {
       >
         ×
       </button>
+
     </article>
   );
 }

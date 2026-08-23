@@ -22,7 +22,7 @@ export default function Navbar({ cartCount }) {
           alt="Xsolla"
         />
 
-        <span>Xsolla Store</span>
+        <span className="navbar__brand-name">Xsolla Store</span>
       </Link>
 
       <nav className="navbar__nav">

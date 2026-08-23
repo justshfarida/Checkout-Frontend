@@ -14,6 +14,7 @@ export default function LoginPage() {
   });
 
   const [error, setError] = useState("");
+  const [isAuthError, setIsAuthError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -28,6 +29,10 @@ export default function LoginPage() {
       ...previousForm,
       [name]: value,
     }));
+
+    // user starts correcting input
+    setIsAuthError(false);
+    setError("");
   }
 
   async function handleSubmit(event) {
@@ -35,12 +40,14 @@ export default function LoginPage() {
 
     if (!form.email || !form.password) {
       setError("Email and password are required.");
+      setIsAuthError(false);
       return;
     }
 
     try {
       setIsLoading(true);
       setError("");
+      setIsAuthError(false);
 
       const response = await api.post("/login", {
         email: form.email,
@@ -53,6 +60,7 @@ export default function LoginPage() {
         "refreshToken",
         response.data.refresh_token
       );
+
       await syncGuestCartToServer();
 
       navigate("/checkout");
@@ -66,11 +74,7 @@ export default function LoginPage() {
 
       if (error.response.status === 401) {
         setError("Email or password is incorrect.");
-        return;
-      }
-
-      if (error.response.status === 422) {
-        setError("User does not exist.");
+        setIsAuthError(true);
         return;
       }
 
@@ -118,13 +122,23 @@ export default function LoginPage() {
               </span>
 
               <input
-                className="login-card__input"
+                className={`login-card__input ${
+                  isAuthError
+                    ? "login-card__input--error"
+                    : ""
+                }`}
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
               />
+
+              {isAuthError && (
+                <span className="login-card__field-error">
+                  {error}
+                </span>
+              )}
             </label>
 
             <label className="login-card__field">
