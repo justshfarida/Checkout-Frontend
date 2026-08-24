@@ -220,3 +220,12 @@
     width: 100%;
   }
 }
+.order-summary__error {
+  margin: 0;
+
+  color: var(--color-error);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.4;
+}

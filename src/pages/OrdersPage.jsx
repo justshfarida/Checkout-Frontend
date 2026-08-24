@@ -55,6 +55,7 @@ export default function OrdersPage() {
         {!isLoading && error && (
           <p className="orders-page__error">
             {error}
+            
           </p>
         )}
 

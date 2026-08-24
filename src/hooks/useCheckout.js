@@ -64,7 +64,7 @@ export function useCheckout() {
         return;
       }
 
-      setError("Could not place the order.");
+      setError("The order could not be placed. Please try again.");
       setStatus("error");
     }
   }

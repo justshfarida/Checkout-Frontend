@@ -86,8 +86,18 @@ export default function StorePage({ theme, onThemeToggle }) {
         <section className="store-page__catalog">
           {isLoading && <p>Loading items...</p>}
 
-          {error && <p>{error}</p>}
+          {!isLoading && error && (
+            <div className="store-page__error">
+              <h2 className="store-page__error-title">
+                The catalogue could not be loaded.
+              </h2>
 
+              <p className="store-page__error-text">
+                Check that checkout-api is running on{" "}
+                {API_URL}.
+              </p>
+            </div>
+          )}
           {!isLoading && !error && (
             <ItemGrid items={items} />
           )}
