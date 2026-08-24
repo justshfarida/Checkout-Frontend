@@ -93,11 +93,6 @@ export default function StorePage({ theme, onThemeToggle }) {
           )}
         </section>
       </main>
-
-      <Footer
-        theme={theme}
-        onThemeToggle={onThemeToggle}
-      />
     </div>
   );
 }
