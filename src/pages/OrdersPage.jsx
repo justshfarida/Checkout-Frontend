@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 
 import Navbar from "../components/layout/Navbar";
 import OrderCard from "../components/checkout/OrderCard";
@@ -7,35 +7,52 @@ import { useCart } from "../context/CartContext";
 
 import api from "../api/client";
 
+import {
+  requestReducer,
+  initialRequestState,
+} from "../reducers/requestReducer";
+
 import "./OrdersPage.css";
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [state, dispatch] = useReducer(
+    requestReducer,
+    initialRequestState
+  );
 
   const { cartCount } = useCart();
 
   useEffect(() => {
     async function fetchOrders() {
-      try {
-        setIsLoading(true);
-        setError("");
+      dispatch({
+        type: "LOADING",
+      });
 
+      try {
         const response = await api.get("/user/orders");
 
-        setOrders(response.data);
+        dispatch({
+          type: "SUCCESS",
+          payload: response.data,
+        });
       } catch (error) {
         console.error(error);
 
-        setError("Your orders could not be loaded.");
-      } finally {
-        setIsLoading(false);
+        dispatch({
+          type: "ERROR",
+          payload: "Your orders could not be loaded.",
+        });
       }
     }
 
     fetchOrders();
   }, []);
+
+  const {
+    data: orders,
+    isLoading,
+    error,
+  } = state;
 
   return (
     <div className="orders-page">
@@ -55,7 +72,6 @@ export default function OrdersPage() {
         {!isLoading && error && (
           <p className="orders-page__error">
             {error}
-            
           </p>
         )}
 
@@ -64,7 +80,10 @@ export default function OrdersPage() {
           orders.length === 0 && (
             <div className="orders-page__empty">
               <h2>No orders yet</h2>
-              <p>Orders you place will show up here.</p>
+
+              <p>
+                Orders you place will show up here.
+              </p>
             </div>
           )}
 

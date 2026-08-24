@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { useNavigate } from "react-router";
 
 import Navbar from "../components/layout/Navbar";
@@ -7,9 +7,14 @@ import ItemGrid from "../components/catalog/ItemGrid";
 
 import { useCart } from "../context/CartContext";
 
-import "./StorePage.css";
+import {
+  requestReducer,
+  initialRequestState,
+} from "../reducers/requestReducer";
 
-const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api/client";
+
+import "./StorePage.css";
 
 const variants = [
   "cyan",
@@ -20,10 +25,14 @@ const variants = [
   "pink",
 ];
 
-export default function StorePage({ theme, onThemeToggle }) {
-  const [items, setItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+export default function StorePage({
+  theme,
+  onThemeToggle,
+}) {
+  const [state, dispatch] = useReducer(
+    requestReducer,
+    initialRequestState
+  );
 
   const { cartCount } = useCart();
 
@@ -31,45 +40,65 @@ export default function StorePage({ theme, onThemeToggle }) {
 
   useEffect(() => {
     async function fetchItems() {
+      dispatch({
+        type: "LOADING",
+      });
+
       try {
-        setIsLoading(true);
-        setError("");
+        const response = await api.get("/items");
 
-        const response = await fetch(`${API_URL}/items`);
+        const data = response.data;
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch items");
-        }
+        const safeItems = Array.isArray(data)
+          ? data
+          : [];
 
-        const data = await response.json();
+        const formattedItems = safeItems.map(
+          (item, index) => ({
+            ...item,
 
-        const formattedItems = data.map((item, index) => ({
-          ...item,
+            // backend cents -> frontend dollars
+            price: item.price / 100,
 
-          price: item.price / 100,
+            // UI-specific values
+            initial:
+              item.name
+                ?.charAt(0)
+                .toUpperCase() || "?",
 
-          initial:
-            item.name?.charAt(0).toUpperCase() || "?",
+            variant:
+              variants[
+                index % variants.length
+              ],
 
-          variant:
-            variants[index % variants.length],
+            soldOut:
+              item.stock <= 0,
+          })
+        );
 
-          soldOut:
-            item.stock <= 0,
-        }));
-
-        setItems(formattedItems);
+        dispatch({
+          type: "SUCCESS",
+          payload: formattedItems,
+        });
       } catch (error) {
         console.error(error);
 
-        setError("Could not load items.");
-      } finally {
-        setIsLoading(false);
+        dispatch({
+          type: "ERROR",
+          payload:
+            "The catalogue could not be loaded.",
+        });
       }
     }
 
     fetchItems();
   }, []);
+
+  const {
+    data: items,
+    isLoading,
+    error,
+  } = state;
 
   function handleCartClick() {
     navigate("/checkout");
@@ -79,28 +108,42 @@ export default function StorePage({ theme, onThemeToggle }) {
     <div className="store-page">
       <Navbar
         cartCount={cartCount}
-        onCartToggle={handleCartClick}
+        onCartClick={handleCartClick}
       />
 
       <main className="store-page__main">
         <section className="store-page__catalog">
-          {isLoading && <p>Loading items...</p>}
+          {isLoading && (
+            <p className="store-page__message">
+              Loading items...
+            </p>
+          )}
 
           {!isLoading && error && (
             <div className="store-page__error">
               <h2 className="store-page__error-title">
-                The catalogue could not be loaded.
+                {error}
               </h2>
 
               <p className="store-page__error-text">
-                Check that checkout-api is running on{" "}
-                {API_URL}.
+                Check that checkout-api is running.
               </p>
             </div>
           )}
-          {!isLoading && !error && (
-            <ItemGrid items={items} />
-          )}
+
+          {!isLoading &&
+            !error &&
+            items.length === 0 && (
+              <p className="store-page__message">
+                No items available.
+              </p>
+            )}
+
+          {!isLoading &&
+            !error &&
+            items.length > 0 && (
+              <ItemGrid items={items} />
+            )}
         </section>
       </main>
     </div>

@@ -56,11 +56,6 @@ export default function LoginPage() {
 
       login(response.data.jwt);
 
-      localStorage.setItem(
-        "refreshToken",
-        response.data.refresh_token
-      );
-
       await syncGuestCartToServer();
 
       navigate("/checkout");

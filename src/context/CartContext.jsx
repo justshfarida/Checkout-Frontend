@@ -37,9 +37,10 @@ export function CartProvider({ children }) {
   const { isAuthenticated } = useAuth();
 
   /*
-   * Guest cart persistence
+   * Guest cart persistence.
    *
-   * Only save to localStorage while logged out.
+   * Only save the cart to localStorage
+   * while the user is logged out.
    */
   useEffect(() => {
     if (!isAuthenticated) {
@@ -51,17 +52,27 @@ export function CartProvider({ children }) {
     setStoredCart,
   ]);
 
+  /*
+   * Total number of items in the cart.
+   */
   const cartCount = cart.reduce(
     (sum, item) => sum + item.quantity,
     0
   );
 
+  /*
+   * Total cart price.
+   */
   const total = cart.reduce(
     (sum, item) =>
       sum + item.price * item.quantity,
     0
   );
 
+  /*
+   * Update browser tab title when
+   * cart quantity changes.
+   */
   useEffect(() => {
     document.title =
       cartCount > 0
@@ -74,29 +85,32 @@ export function CartProvider({ children }) {
   }, [cartCount]);
 
   /*
-   * Convert backend cart item
-   * into the shape our frontend expects.
+   * Convert a backend cart item into
+   * the shape expected by the frontend.
    */
   function formatServerItem(item, index) {
     return {
       ...item,
 
-      // Backend stores cents
+      // Backend stores price in cents.
       price: item.price / 100,
 
       initial:
-        item.name?.charAt(0).toUpperCase() ||
-        "?",
+        item.name
+          ?.charAt(0)
+          .toUpperCase() || "?",
 
       variant:
         variants[index % variants.length],
 
-      soldOut: item.stock <= 0,
+      soldOut:
+        item.stock <= 0,
     };
   }
 
   /*
-   * GET authenticated user's cart
+   * Load the authenticated user's
+   * cart from the backend.
    */
   async function loadServerCart() {
     const response = await api.get(
@@ -106,9 +120,8 @@ export function CartProvider({ children }) {
     const serverItems =
       response.data.items ?? [];
 
-    const formattedCart = serverItems.map(
-      formatServerItem
-    );
+    const formattedCart =
+      serverItems.map(formatServerItem);
 
     dispatch({
       type: "SET_CART",
@@ -119,10 +132,38 @@ export function CartProvider({ children }) {
   }
 
   /*
+   * IMPORTANT:
+   *
+   * When the page is refreshed,
+   * AuthContext restores the access token
+   * from localStorage.
+   *
+   * When the user becomes authenticated,
+   * load their real cart from the backend.
+   *
+   * Without this, the cart can appear empty
+   * after F5 because the guest localStorage
+   * cart was cleared after login.
+   */
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    loadServerCart().catch((error) => {
+      console.error(
+        "Failed to load authenticated cart:",
+        error
+      );
+    });
+  }, [isAuthenticated]);
+
+  /*
    * Called after login.
    *
-   * Takes the guest cart from localStorage
-   * and sends every item to the backend.
+   * Transfer the guest cart from
+   * localStorage to the authenticated
+   * user's backend cart.
    */
   async function syncGuestCartToServer() {
     const guestCart = storedCart;
@@ -137,23 +178,29 @@ export function CartProvider({ children }) {
     }
 
     /*
-     * After syncing, ask backend for the
-     * authoritative cart.
+     * Backend is now the authoritative
+     * source for the logged-in cart.
      */
     await loadServerCart();
 
     /*
-     * Guest cart has successfully been
-     * transferred to the backend.
+     * The guest cart has successfully
+     * been transferred to the backend,
+     * so it can be removed from localStorage.
      */
     setStoredCart([]);
   }
 
+  /*
+   * Add an item to the cart.
+   */
   async function addToCart(item) {
     /*
-     * Guest:
-     * reducer changes React state.
-     * useEffect above persists it to localStorage.
+     * Guest user:
+     *
+     * Update React state.
+     * The persistence effect above will
+     * save the cart to localStorage.
      */
     if (!isAuthenticated) {
       dispatch({
@@ -165,40 +212,50 @@ export function CartProvider({ children }) {
     }
 
     /*
-     * Logged in:
-     * determine final quantity first.
+     * Authenticated user:
+     *
+     * Calculate the final quantity that
+     * should be stored in the backend.
      */
     const existing = cart.find(
-      (cartItem) => cartItem.id === item.id
+      (cartItem) =>
+        cartItem.id === item.id
     );
 
     const newQuantity = existing
       ? existing.quantity + 1
       : 1;
-    try{
-        await api.patch(
-      `/user/cart/items/${item.id}`,
-      {
-        quantity: newQuantity,
+
+    try {
+      await api.patch(
+        `/user/cart/items/${item.id}`,
+        {
+          quantity: newQuantity,
+        }
+      );
+    } catch (error) {
+      /*
+       * If authentication fails,
+       * keep the item in the frontend cart
+       * instead of making it disappear.
+       */
+      if (
+        error.response?.status === 401
+      ) {
+        dispatch({
+          type: "ADD",
+          item,
+        });
+
+        return;
       }
-    );
 
+      throw error;
     }
-    catch(error){
-       if (error.response?.status === 401) {
-      dispatch({
-        type: "ADD",
-        item,
-      });
 
-      return;
-    }
-    throw error;
-
-  }
-    
     /*
-     * Backend succeeded, now update UI.
+     * Backend succeeded.
+     * Now update the UI.
      */
     dispatch({
       type: "ADD",
@@ -206,13 +263,21 @@ export function CartProvider({ children }) {
     });
   }
 
+  /*
+   * Increase quantity.
+   */
   async function increment(id) {
     const item = cart.find(
       (item) => item.id === id
     );
 
-    if (!item) return;
+    if (!item) {
+      return;
+    }
 
+    /*
+     * Guest cart.
+     */
     if (!isAuthenticated) {
       dispatch({
         type: "INCREMENT",
@@ -222,6 +287,9 @@ export function CartProvider({ children }) {
       return;
     }
 
+    /*
+     * Authenticated cart.
+     */
     const newQuantity =
       item.quantity + 1;
 
@@ -238,22 +306,30 @@ export function CartProvider({ children }) {
     });
   }
 
+  /*
+   * Decrease quantity.
+   */
   async function decrement(id) {
     const item = cart.find(
       (item) => item.id === id
     );
 
-    if (!item) return;
+    if (!item) {
+      return;
+    }
 
     /*
-     * If quantity is already 1,
-     * decrementing should remove the item.
+     * If quantity is 1, decrement means
+     * remove the item completely.
      */
     if (item.quantity === 1) {
       await remove(id);
       return;
     }
 
+    /*
+     * Guest cart.
+     */
     if (!isAuthenticated) {
       dispatch({
         type: "DECREMENT",
@@ -263,6 +339,9 @@ export function CartProvider({ children }) {
       return;
     }
 
+    /*
+     * Authenticated cart.
+     */
     const newQuantity =
       item.quantity - 1;
 
@@ -279,7 +358,13 @@ export function CartProvider({ children }) {
     });
   }
 
+  /*
+   * Remove an item completely.
+   */
   async function remove(id) {
+    /*
+     * Guest cart.
+     */
     if (!isAuthenticated) {
       dispatch({
         type: "REMOVE",
@@ -289,6 +374,9 @@ export function CartProvider({ children }) {
       return;
     }
 
+    /*
+     * Authenticated cart.
+     */
     await api.delete(
       `/user/cart/items/${id}`
     );
@@ -299,6 +387,15 @@ export function CartProvider({ children }) {
     });
   }
 
+  /*
+   * Clear cart from frontend state.
+   *
+   * For guests we also clear localStorage.
+   *
+   * NOTE:
+   * For authenticated users this currently
+   * does NOT delete the server-side cart.
+   */
   function clearCart() {
     dispatch({
       type: "CLEAR",
@@ -309,6 +406,10 @@ export function CartProvider({ children }) {
     }
   }
 
+  /*
+   * Values/functions exposed through
+   * CartContext.
+   */
   const value = useMemo(
     () => ({
       cart,
@@ -334,7 +435,9 @@ export function CartProvider({ children }) {
   );
 
   return (
-    <CartContext.Provider value={value}>
+    <CartContext.Provider
+      value={value}
+    >
       {children}
     </CartContext.Provider>
   );
