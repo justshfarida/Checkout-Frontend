@@ -137,7 +137,7 @@ export default function OrderSummary() {
           <strong>Total</strong>
 
           <strong className="order-summary__total-price">
-            ${total.toFixed(2)}
+            ${(total/100).toFixed(2)}
           </strong>
         </div>
 

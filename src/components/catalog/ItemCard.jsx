@@ -29,7 +29,7 @@ export default function ItemCard({ item }) {
 
         <div className="item-card__footer">
           <strong className="item-card__price">
-            ${item.price.toFixed(2)}
+            ${(item.price/100).toFixed(2)}
           </strong>
 
           <button

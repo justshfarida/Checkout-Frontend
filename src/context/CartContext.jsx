@@ -91,10 +91,6 @@ export function CartProvider({ children }) {
   function formatServerItem(item, index) {
     return {
       ...item,
-
-      // Backend stores price in cents.
-      price: item.price / 100,
-
       initial:
         item.name
           ?.charAt(0)
@@ -124,7 +120,7 @@ export function CartProvider({ children }) {
       serverItems.map(formatServerItem);
 
     dispatch({
-      type: "SET_CART",
+      type: "SET_CART", 
       cart: formattedCart,
     });
 
@@ -433,7 +429,7 @@ export function CartProvider({ children }) {
       storedCart,
     ]
   );
-
+// "Keep/reuse this calculated value until one of these dependencies changes."
   return (
     <CartContext.Provider
       value={value}

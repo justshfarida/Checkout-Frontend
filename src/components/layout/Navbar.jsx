@@ -2,13 +2,16 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 
 import "./Navbar.css";
 
-export default function Navbar({ cartCount }) {
+export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
 
   const navigate = useNavigate();
+  const { cartCount } = useCart();
+
 
   const [isMenuOpen, setIsMenuOpen] =
     useState(false);

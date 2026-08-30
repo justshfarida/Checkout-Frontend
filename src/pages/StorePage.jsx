@@ -4,8 +4,7 @@ import { useNavigate } from "react-router";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ItemGrid from "../components/catalog/ItemGrid";
-
-import { useCart } from "../context/CartContext";
+import ItemSkeletonGrid from "../components/catalog/ItemSkeletonGrid";
 
 import {
   requestReducer,
@@ -34,7 +33,6 @@ export default function StorePage({
     initialRequestState
   );
 
-  const { cartCount } = useCart();
 
   const navigate = useNavigate();
 
@@ -56,10 +54,6 @@ export default function StorePage({
         const formattedItems = safeItems.map(
           (item, index) => ({
             ...item,
-
-            // backend cents -> frontend dollars
-            price: item.price / 100,
-
             // UI-specific values
             initial:
               item.name
@@ -107,17 +101,11 @@ export default function StorePage({
   return (
     <div className="store-page">
       <Navbar
-        cartCount={cartCount}
-        onCartClick={handleCartClick}
       />
 
       <main className="store-page__main">
         <section className="store-page__catalog">
-          {isLoading && (
-            <p className="store-page__message">
-              Loading items...
-            </p>
-          )}
+          {isLoading && <ItemSkeletonGrid />}
 
           {!isLoading && error && (
             <div className="store-page__error">

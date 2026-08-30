@@ -99,7 +99,7 @@ export function AuthProvider({ children }) {
 
             return Promise.reject(
               refreshError
-            );
+            ); //simple return is like that: return Promise.resolve(undefined);
           }
         }
       );
@@ -108,7 +108,7 @@ export function AuthProvider({ children }) {
       api.interceptors.response.eject(
         interceptor
       );
-    };
+    }; //cleanup function unregister the interceptor
   }, [accessToken]);
 
   const isAuthenticated =

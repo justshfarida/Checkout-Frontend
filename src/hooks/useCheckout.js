@@ -17,12 +17,8 @@ export function useCheckout() {
       const lineItems = cart.map((item) => ({
         item_id: item.id,
         quantity: item.quantity,
-
-        // frontend dollars -> backend cents
-        price: Math.round(item.price * 100),
+        price: item.price,
       }));
-
-      const totalInCents = Math.round(total * 100);
 
       const idempotencyKey = crypto.randomUUID();
 
@@ -30,7 +26,7 @@ export function useCheckout() {
         "/orders",
         {
           line_items: lineItems,
-          total: totalInCents,
+          total: total,
         },
         {
           headers: {

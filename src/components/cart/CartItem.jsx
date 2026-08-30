@@ -62,7 +62,7 @@ export default function CartItem({ item }) {
 
       {/* Price */}
       <strong className="cart-item__total">
-        ${lineTotal.toFixed(2)}
+        ${(lineTotal/100).toFixed(2)}
       </strong>
 
       {/* Remove */}

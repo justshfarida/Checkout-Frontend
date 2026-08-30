@@ -20,8 +20,6 @@ export default function OrdersPage() {
     initialRequestState
   );
 
-  const { cartCount } = useCart();
-
   useEffect(() => {
     async function fetchOrders() {
       dispatch({
@@ -56,7 +54,7 @@ export default function OrdersPage() {
 
   return (
     <div className="orders-page">
-      <Navbar cartCount={cartCount} />
+      <Navbar />
 
       <main className="orders-page__main">
         <h1 className="orders-page__title">
