@@ -1,8 +1,13 @@
-import { useEffect, useReducer } from "react";
-import { useNavigate } from "react-router";
+import {
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import Pagination from "../components/layout/Pagination";
+
 import ItemGrid from "../components/catalog/ItemGrid";
 import ItemSkeletonGrid from "../components/catalog/ItemSkeletonGrid";
 
@@ -24,6 +29,8 @@ const variants = [
   "pink",
 ];
 
+const ITEMS_PER_PAGE = 9;
+
 export default function StorePage({
   theme,
   onThemeToggle,
@@ -33,8 +40,8 @@ export default function StorePage({
     initialRequestState
   );
 
-
-  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     async function fetchItems() {
@@ -43,37 +50,50 @@ export default function StorePage({
       });
 
       try {
-        const response = await api.get("/items");
+        const offset =
+          (page - 1) * ITEMS_PER_PAGE;
 
-        const data = response.data;
-
-        const safeItems = Array.isArray(data)
-          ? data
-          : [];
-
-        const formattedItems = safeItems.map(
-          (item, index) => ({
-            ...item,
-            // UI-specific values
-            initial:
-              item.name
-                ?.charAt(0)
-                .toUpperCase() || "?",
-
-            variant:
-              variants[
-                index % variants.length
-              ],
-
-            soldOut:
-              item.stock <= 0,
-          })
+        const response = await api.get(
+          "/items",
+          {
+            params: {
+              limit: ITEMS_PER_PAGE,
+              offset,
+            },
+          }
         );
+
+        const fetchedItems =
+          response.data.items ?? [];
+
+        const formattedItems =
+          fetchedItems.map(
+            (item, index) => ({
+              ...item,
+
+              initial:
+                item.name
+                  ?.charAt(0)
+                  .toUpperCase() || "?",
+
+              variant:
+                variants[
+                  index % variants.length
+                ],
+
+              soldOut:
+                item.stock <= 0,
+            })
+          );
 
         dispatch({
           type: "SUCCESS",
           payload: formattedItems,
         });
+
+        setTotal(
+          response.data.total ?? 0
+        );
       } catch (error) {
         console.error(error);
 
@@ -86,7 +106,7 @@ export default function StorePage({
     }
 
     fetchItems();
-  }, []);
+  }, [page]);
 
   const {
     data: items,
@@ -94,28 +114,25 @@ export default function StorePage({
     error,
   } = state;
 
-  function handleCartClick() {
-    navigate("/checkout");
-  }
+  const totalPages = Math.ceil(
+    total / ITEMS_PER_PAGE
+  );
 
   return (
     <div className="store-page">
-      <Navbar
-      />
+      <Navbar />
 
       <main className="store-page__main">
         <section className="store-page__catalog">
-          {isLoading && <ItemSkeletonGrid />}
+          {isLoading && (
+            <ItemSkeletonGrid />
+          )}
 
           {!isLoading && error && (
             <div className="store-page__error">
               <h2 className="store-page__error-title">
                 {error}
               </h2>
-
-              <p className="store-page__error-text">
-                Check that checkout-api is running.
-              </p>
             </div>
           )}
 
@@ -130,10 +147,23 @@ export default function StorePage({
           {!isLoading &&
             !error &&
             items.length > 0 && (
-              <ItemGrid items={items} />
+              <>
+                <ItemGrid items={items} />
+
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
+              </>
             )}
         </section>
       </main>
+
+      <Footer
+        theme={theme}
+        onThemeToggle={onThemeToggle}
+      />
     </div>
   );
 }

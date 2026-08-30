@@ -99,7 +99,7 @@ export default function OrderSummary() {
         <span>Subtotal</span>
 
         <strong>
-          ${total.toFixed(2)}
+          ${(total/100).toFixed(2)}
         </strong>
       </div>
 
