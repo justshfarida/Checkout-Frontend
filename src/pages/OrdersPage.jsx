@@ -1,56 +1,87 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useState } from "react";
 
 import Navbar from "../components/layout/Navbar";
 import OrderCard from "../components/checkout/OrderCard";
-
-import { useCart } from "../context/CartContext";
+// import OrderSkeleton from "../components/checkout/OrderSkeleton";
 
 import api from "../api/client";
 
-import {
-  requestReducer,
-  initialRequestState,
-} from "../reducers/requestReducer";
-
 import "./OrdersPage.css";
 
+const ORDERS_PER_PAGE = 5;
+
 export default function OrdersPage() {
-  const [state, dispatch] = useReducer(
-    requestReducer,
-    initialRequestState
-  );
+  const [orders, setOrders] = useState([]);
+  const [cursor, setCursor] = useState("");
+  const [hasMore, setHasMore] = useState(false);
+
+  const [isLoading, setIsLoading] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  async function fetchOrders(
+    currentCursor = ""
+  ) {
+    try {
+      setIsLoading(true);
+      setError("");
+
+      const response = await api.get(
+        "/user/orders/cursor",
+        {
+          params: {
+            limit: ORDERS_PER_PAGE,
+
+            ...(currentCursor && {
+              cursor: currentCursor,
+            }),
+          },
+        }
+      );
+
+      const newOrders =
+        response.data.orders ?? [];
+
+      setOrders((currentOrders) => [
+        ...currentOrders,
+        ...newOrders,
+      ]);
+
+      setCursor(
+        response.data.next_cursor ?? ""
+      );
+
+      setHasMore(
+        response.data.has_more ?? false
+      );
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        "Your orders could not be loaded."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function fetchOrders() {
-      dispatch({
-        type: "LOADING",
-      });
-
-      try {
-        const response = await api.get("/user/orders");
-
-        dispatch({
-          type: "SUCCESS",
-          payload: response.data,
-        });
-      } catch (error) {
-        console.error(error);
-
-        dispatch({
-          type: "ERROR",
-          payload: "Your orders could not be loaded.",
-        });
-      }
-    }
-
     fetchOrders();
   }, []);
 
-  const {
-    data: orders,
-    isLoading,
-    error,
-  } = state;
+  function handleLoadMore() {
+    if (
+      isLoading ||
+      !hasMore ||
+      !cursor
+    ) {
+      return;
+    }
+
+    fetchOrders(cursor);
+  }
 
   return (
     <div className="orders-page">
@@ -61,13 +92,7 @@ export default function OrdersPage() {
           Your orders
         </h1>
 
-        {isLoading && (
-          <p className="orders-page__message">
-            Loading orders...
-          </p>
-        )}
-
-        {!isLoading && error && (
+        {error && (
           <p className="orders-page__error">
             {error}
           </p>
@@ -80,23 +105,38 @@ export default function OrdersPage() {
               <h2>No orders yet</h2>
 
               <p>
-                Orders you place will show up here.
+                Orders you place will
+                show up here.
               </p>
             </div>
           )}
 
-        {!isLoading &&
-          !error &&
-          orders.length > 0 && (
-            <div className="orders-page__list">
-              {orders.map((order) => (
-                <OrderCard
-                  key={order.id}
-                  order={order}
-                />
-              ))}
-            </div>
-          )}
+        {orders.length > 0 && (
+          <div className="orders-page__list">
+            {orders.map((order) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+              />
+            ))}
+          </div>
+        )}
+
+        {isLoading && (
+          <p className="orders-page__message">
+            Loading...
+          </p>
+        )}
+
+        {!isLoading && hasMore && (
+          <button
+            type="button"
+            className="orders-page__load-more"
+            onClick={handleLoadMore}
+          >
+            Load more
+          </button>
+        )}
       </main>
     </div>
   );
