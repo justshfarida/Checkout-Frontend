@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview", 
+     "lint": "eslint ."
+
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
@@ -15,5 +17,12 @@
     "react-dom": "latest",
     "react-router": "^8.3.0",
     "vite": "latest"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.5",
+    "globals": "^17.11.0"
   }
 }
