@@ -30,8 +30,7 @@ const variants = [
 
 const ITEMS_PER_PAGE = 9;
 
-export default function StorePage({
-}) {
+export default function StorePage() {
   const [state, dispatch] = useReducer(
     requestReducer,
     initialRequestState
