@@ -27,8 +27,6 @@ export default function App() {
           path="/"
           element={
             <StorePage
-              theme={theme}
-              onThemeToggle={toggleTheme}
             />
           }
         />
