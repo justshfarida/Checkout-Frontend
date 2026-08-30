@@ -1,0 +1,15 @@
+stages:
+  - build
+
+build_frontend:
+  stage: build
+  image: node:22-alpine
+
+  script:
+    - npm ci
+    - npm run build
+
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 hour
