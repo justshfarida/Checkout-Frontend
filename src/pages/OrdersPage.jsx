@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
 import Navbar from "../components/layout/Navbar";
 import OrderCard from "../components/checkout/OrderCard";
-// import OrderSkeleton from "../components/checkout/OrderSkeleton";
 
 import api from "../api/client";
 
@@ -16,14 +18,73 @@ export default function OrdersPage() {
   const [hasMore, setHasMore] = useState(false);
 
   const [isLoading, setIsLoading] =
-    useState(false);
+    useState(true);
 
   const [error, setError] =
     useState("");
 
-  async function fetchOrders(
-    currentCursor = ""
-  ) {
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadInitialOrders() {
+      try {
+        const response = await api.get(
+          "/user/orders/cursor",
+          {
+            params: {
+              limit: ORDERS_PER_PAGE,
+            },
+          }
+        );
+
+        if (cancelled) {
+          return;
+        }
+
+        setOrders(
+          response.data.orders ?? []
+        );
+
+        setCursor(
+          response.data.next_cursor ?? ""
+        );
+
+        setHasMore(
+          response.data.has_more ?? false
+        );
+      } catch (error) {
+        if (cancelled) {
+          return;
+        }
+
+        console.error(error);
+
+        setError(
+          "Your orders could not be loaded."
+        );
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadInitialOrders();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function handleLoadMore() {
+    if (
+      isLoading ||
+      !hasMore ||
+      !cursor
+    ) {
+      return;
+    }
+
     try {
       setIsLoading(true);
       setError("");
@@ -33,10 +94,7 @@ export default function OrdersPage() {
         {
           params: {
             limit: ORDERS_PER_PAGE,
-
-            ...(currentCursor && {
-              cursor: currentCursor,
-            }),
+            cursor,
           },
         }
       );
@@ -60,27 +118,11 @@ export default function OrdersPage() {
       console.error(error);
 
       setError(
-        "Your orders could not be loaded."
+        "More orders could not be loaded."
       );
     } finally {
       setIsLoading(false);
     }
-  }
-
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  function handleLoadMore() {
-    if (
-      isLoading ||
-      !hasMore ||
-      !cursor
-    ) {
-      return;
-    }
-
-    fetchOrders(cursor);
   }
 
   return (
@@ -122,21 +164,27 @@ export default function OrdersPage() {
           </div>
         )}
 
-        {isLoading && (
-          <p className="orders-page__message">
-            Loading...
-          </p>
-        )}
+        {isLoading &&
+          orders.length === 0 && (
+            <p className="orders-page__message">
+              Loading orders...
+            </p>
+          )}
 
-        {!isLoading && hasMore && (
-          <button
-            type="button"
-            className="orders-page__load-more"
-            onClick={handleLoadMore}
-          >
-            Load more
-          </button>
-        )}
+        {!isLoading &&
+          hasMore && (
+            <div className="orders-page__load-more-wrapper">
+              <button
+                type="button"
+                className="orders-page__load-more"
+                onClick={
+                  handleLoadMore
+                }
+              >
+                Load more
+              </button>
+            </div>
+          )}
       </main>
     </div>
   );

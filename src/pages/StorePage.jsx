@@ -5,7 +5,6 @@ import {
 } from "react";
 
 import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
 import Pagination from "../components/layout/Pagination";
 
 import ItemGrid from "../components/catalog/ItemGrid";
@@ -159,11 +158,6 @@ export default function StorePage({
             )}
         </section>
       </main>
-
-      <Footer
-        theme={theme}
-        onThemeToggle={onThemeToggle}
-      />
     </div>
   );
 }
