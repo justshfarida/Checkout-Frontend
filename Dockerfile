@@ -16,7 +16,7 @@ RUN npm run build
 FROM nginx:alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
+# Go to the previous builder stage, take the generated /app/dist files, and put them into Nginx's website directory.
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80
