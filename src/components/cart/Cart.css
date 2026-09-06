@@ -89,3 +89,27 @@
     font-size: 12px;
   }
 }
+.empty-cart__browse-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 24px;
+  padding: 16px 28px;
+
+  background: #80eaff;
+  color: #141d1f;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.empty-cart__browse-button:hover {
+  opacity: 0.9;
+}

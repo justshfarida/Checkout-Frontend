@@ -1,6 +1,6 @@
 import { useCart } from "../../context/CartContext";
 import CartItem from "./CartItem";
-
+import { Link } from "react-router";
 import "./Cart.css";
 
 export default function Cart() {
@@ -20,8 +20,11 @@ export default function Cart() {
           </h2>
 
           <p className="cart__empty-text">
-            Nothing here yet. Add an item to continue.
+            Nothing here yet. The catalogue is one click away.
           </p>
+           <Link to="/" className="empty-cart__browse-button">
+        Browse the store
+      </Link>
         </div>
       ) : (
         <div className="cart__items">
