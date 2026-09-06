@@ -7,30 +7,23 @@ export function useCheckout() {
   const [error, setError] = useState("");
   const [order, setOrder] = useState(null);
 
-  async function checkout(cart, total) {
+  async function checkout() {
     if (status === "processing") return;
 
     try {
       setStatus("processing");
       setError("");
 
-      const lineItems = cart.map((item) => ({
-        item_id: item.id,
-        quantity: item.quantity,
-        price: item.price,
-      }));
-
-      const idempotencyKey = crypto.randomUUID();
+      const idempotencyKey =
+        crypto.randomUUID();
 
       const response = await api.post(
         "/orders",
-        {
-          line_items: lineItems,
-          total: total,
-        },
+        null,
         {
           headers: {
-            "Idempotency-Key": idempotencyKey,
+            "Idempotency-Key":
+              idempotencyKey,
           },
         }
       );
@@ -43,24 +36,59 @@ export function useCheckout() {
       console.error(error);
 
       if (!error.response) {
-        setError("Cannot reach the server.");
+        setError(
+          "Cannot reach the server."
+        );
         setStatus("error");
         return;
       }
 
-      if (error.response.status === 401) {
-        setError("Your session has expired.");
+      if (
+        error.response.status === 401
+      ) {
+        setError(
+          "Your session has expired."
+        );
         setStatus("unauthorized");
         return;
       }
 
-      if (error.response.status === 402) {
-        setError("Payment was declined.");
+      if (
+        error.response.status === 402
+      ) {
+        setError(
+          "Payment was declined."
+        );
+        setStatus("error");
+
+        return error.response.data;
+      }
+
+      if (
+        error.response.data?.error ===
+        "EMPTY_CART"
+      ) {
+        setError(
+          "Your cart is empty."
+        );
         setStatus("error");
         return;
       }
 
-      setError("The order could not be placed. Please try again.");
+      if (
+        error.response.data?.error ===
+        "INSUFFICIENT_STOCK"
+      ) {
+        setError(
+          "One or more items are no longer available in the requested quantity."
+        );
+        setStatus("error");
+        return;
+      }
+
+      setError(
+        "The order could not be placed. Please try again."
+      );
       setStatus("error");
     }
   }
@@ -79,38 +107,3 @@ export function useCheckout() {
     reset,
   };
 }
-// import { useEffect, useRef, useState } from "react";
-
-// export function useCheckout() {
-//   const [status, setStatus] = useState("idle");
-//   const timeoutRef = useRef(null);
-
-//   useEffect(() => { 
-//     return () => {
-//       if (timeoutRef.current) {
-//         clearTimeout(timeoutRef.current);
-//       }
-//     };
-//   }, []);
-
-//   function checkout(order) {
-//     if (status === "processing") return;
-
-//     setStatus("processing");
-//     console.log("Order submitted:", order);
-
-//     timeoutRef.current = setTimeout(() => {
-//       setStatus("success");
-//     }, 900);
-//   }
-
-//   function reset() {
-//     if (timeoutRef.current) {
-//       clearTimeout(timeoutRef.current);
-//       timeoutRef.current = null;
-//     }
-//     setStatus("idle");
-//   }
-
-//   return { status, checkout, reset };
-// }
