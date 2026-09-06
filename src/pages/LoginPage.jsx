@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import {Link,  useNavigate } from "react-router";
 
 import api from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
-
 import "./LoginPage.css";
 
 export default function LoginPage() {
@@ -164,12 +163,12 @@ export default function LoginPage() {
 
           <p className="login-card__signup">
             No account yet?{" "}
-            <a
-              href="#"
+            <Link
+              to="/signup"
               className="login-card__signup-link"
             >
               Create one
-            </a>
+            </Link>
           </p>
         </section>
       </div>
