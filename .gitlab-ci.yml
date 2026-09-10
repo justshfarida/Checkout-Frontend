@@ -70,6 +70,8 @@ visual_tests:
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
+    DOCKER_API_VERSION: "1.43"
+
 
     # Playwright runs in the GitLab job container.
     # Frontend is exposed by Docker-in-Docker on port 3000.
@@ -149,6 +151,7 @@ docker:
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
+    DOCKER_API_VERSION: "1.43"
 
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
