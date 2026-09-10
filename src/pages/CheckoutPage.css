@@ -1,0 +1,39 @@
+.checkout-page {
+  min-height: 100vh;
+
+  background: var(--color-background);
+}
+
+.checkout-page__main {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+
+  width: 100%;
+  max-width: 1248px;
+
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+
+/* TABLET */
+
+@media (max-width: 900px) {
+  .checkout-page__main {
+    flex-direction: column;
+
+    padding: 32px 24px 48px;
+  }
+}
+
+
+/* MOBILE */
+
+@media (max-width: 530px) {
+  .checkout-page__main {
+    gap: 16px;
+
+    padding: 24px 16px 40px;
+  }
+}

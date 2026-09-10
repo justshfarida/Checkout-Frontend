@@ -1,0 +1,21 @@
+name: farida-checkout-e2e
+
+services:
+  backend:
+    build:
+      context: ./tests/mock-api
+      dockerfile: Dockerfile
+
+    expose:
+      - "8080"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    depends_on:
+      - backend
+
+    ports:
+      - "3000:80"

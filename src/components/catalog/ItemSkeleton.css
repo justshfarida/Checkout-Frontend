@@ -1,0 +1,48 @@
+.item-skeleton {
+  overflow: hidden;
+  background: var(--color-surface);
+  border-radius: 4px;
+}
+
+.item-skeleton__visual {
+  height: 244px;
+  background: var(--color-border);
+}
+
+.item-skeleton__body {
+  padding: 20px;
+}
+
+.item-skeleton__line {
+  background: var(--color-border);
+  border-radius: 4px;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.item-skeleton__line--title {
+  width: 65%;
+  height: 20px;
+  margin-bottom: 12px;
+}
+
+.item-skeleton__line--text {
+  width: 90%;
+  height: 14px;
+  margin-bottom: 20px;
+}
+
+.item-skeleton__line--price {
+  width: 35%;
+  height: 18px;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}

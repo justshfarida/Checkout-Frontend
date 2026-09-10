@@ -1,0 +1,281 @@
+/* =========================
+   CARD
+   ========================= */
+
+.item-card {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%; 
+  /* Take 100% of the available width of my parent/grid cell. */
+  max-width: 368px;
+
+  background: var(--color-surface);
+
+  border-radius: var(--radius-md);
+  overflow: hidden;
+    /* Anything belonging to my children that extends outside my boundaries should be clipped. */
+  box-shadow: var(--shadow-card);
+
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.item-card:hover {
+  transform: translateY(-2px);
+}
+/* Moves the element 2 pixels upward along the vertical (Y) axis. */
+
+/* =========================
+   PRODUCT VISUAL
+   ========================= */
+
+.item-card__visual {
+  display: grid;
+  place-items: center;
+
+  width: 100%;
+  height: 254px;
+
+  flex-shrink: 0;
+}
+
+
+/* Cyan */
+
+.item-card__visual--cyan {
+  background:
+    linear-gradient(
+      135deg,
+      #111718 28%,
+      #62c6dc 68%,
+      #9cecff 100%
+    );
+}
+
+
+/* Purple */
+
+.item-card__visual--purple {
+  background:
+    linear-gradient(
+      135deg,
+      #111718 28%,
+      #5e4bc4 68%,
+      #927cff 100%
+    );
+}
+
+
+/* Lime */
+
+.item-card__visual--lime {
+  background:
+    linear-gradient(
+      135deg,
+      #9ea3a0 10%,
+      #dff6a5 60%,
+      #efffb5 100%
+    );
+}
+
+
+/* Blue */
+
+.item-card__visual--blue {
+  background:
+    linear-gradient(
+      135deg,
+      #111718 25%,
+      #3f8fa8 70%,
+      #71cbe5 100%
+    );
+}
+
+
+/* Orange */
+
+.item-card__visual--orange {
+  background:
+    linear-gradient(
+      135deg,
+      #171311 25%,
+      #b75b2c 68%,
+      #ffad69 100%
+    );
+}
+
+
+/* Pink */
+
+.item-card__visual--pink {
+  background:
+    linear-gradient(
+      135deg,
+      #171116 25%,
+      #a84479 68%,
+      #f48fc3 100%
+    );
+}
+
+
+/* =========================
+   INITIAL CIRCLE
+   ========================= */
+
+.item-card__initial {
+  display: grid;
+  place-items: center;
+
+  width: 131px;
+  height: 131px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+
+  font-family: var(--font-family);
+  font-size: 68px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+
+}
+
+
+/* =========================
+   CARD BODY
+   ========================= */
+
+.item-card__body {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+  gap: 8px;
+  padding: var(--space-md);
+
+}
+
+
+/* =========================
+   TITLE
+   ========================= */
+
+.item-card__title {
+  margin: 0;
+ /* change this for testing */
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+
+
+/* =========================
+   DESCRIPTION
+   ========================= */
+
+.item-card__description {
+  margin: 4px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+  line-height: 18px;
+}
+
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.item-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: var(--space-md);
+}
+
+
+/* =========================
+   PRICE
+   ========================= */
+
+.item-card__price {
+  color: var(--color-price);
+
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+
+/* =========================
+   BUTTON
+   ========================= */
+
+.item-card__button {
+  border: 0;
+  border-radius: 8px;
+
+  padding: 9px 20px;
+
+  background: var(--color-accent);
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.item-card__button:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.item-card__button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+
+/* =========================
+   SOLD OUT
+   ========================= */
+
+.item-card__button:disabled {
+  background: var(--color-disabled-background);
+  color: var(--color-disabled-text);
+
+  cursor: not-allowed;
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 390px) {
+  .item-card {
+    max-width: none;
+  }
+
+  .item-card__visual {
+    height: 220px;
+  }
+}
