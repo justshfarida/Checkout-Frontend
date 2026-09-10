@@ -1,6 +1,6 @@
 .store-page {
   min-height: 100vh;
-  background: var(--color-background);
+  background: #f4f4f1;
 }
 
 .store-page__main {

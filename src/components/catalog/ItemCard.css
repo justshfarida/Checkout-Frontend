@@ -166,12 +166,12 @@
 
 .item-card__title {
   margin: 0;
-
-  color: var(--color-text);
+ /* change this for testing */
+  color: #141d1f;
 
   font-family: var(--font-family);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 100%;
   letter-spacing: 0%;
 }
