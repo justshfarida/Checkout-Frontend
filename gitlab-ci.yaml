@@ -1,0 +1,163 @@
+stages:
+  - lint
+  - build
+  - test
+  - docker
+
+
+# --------------------------------------------------
+# GLOBAL CONFIG
+# --------------------------------------------------
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+
+
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - .npm/
+
+
+default:
+  image: node:20-alpine
+
+
+# --------------------------------------------------
+# LINT
+# --------------------------------------------------
+
+lint:
+  stage: lint
+
+  script:
+    - npm ci --cache .npm --prefer-offline
+    - npm run lint
+
+
+# --------------------------------------------------
+# BUILD
+# --------------------------------------------------
+
+build:
+  stage: build
+
+  script:
+    - npm ci --cache .npm --prefer-offline
+    - npm run build
+
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+
+
+# --------------------------------------------------
+# VISUAL / E2E TESTS
+# --------------------------------------------------
+
+visual_tests:
+  stage: test
+
+  # IMPORTANT:
+  # Replace this version with the version from:
+  # npm list @playwright/test
+  image: mcr.microsoft.com/playwright:v1.63.0-noble
+
+  services:
+    - name: docker:24-dind
+      alias: docker
+
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+
+    # Playwright runs in the GitLab job container.
+    # The frontend runs inside Docker-in-Docker.
+    BASE_URL: http://docker:3000
+    FRONTEND_URL: http://docker:3000
+
+  before_script:
+    # Install Docker CLI + Compose
+    - apt-get update
+    - apt-get install -y docker.io docker-compose-v2 curl
+
+    # Install frontend dependencies
+    - npm ci --cache .npm --prefer-offline
+
+    # Login to GitLab Container Registry
+    # Needed because docker-compose.e2e.yml pulls the private backend image
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+
+  script:
+    # Start:
+    # PostgreSQL + backend + frontend
+    - docker compose -f docker-compose.e2e.yml up -d --build
+
+    # Useful in CI logs
+    - docker compose -f docker-compose.e2e.yml ps
+
+    # Wait until frontend is actually available
+    - |
+      echo "Waiting for frontend..."
+      for i in $(seq 1 30); do
+        if curl -f http://docker:3000 > /dev/null 2>&1; then
+          echo "Frontend is ready."
+          break
+        fi
+
+        if [ "$i" -eq 30 ]; then
+          echo "Frontend did not become ready."
+          docker compose -f docker-compose.e2e.yml logs
+          exit 1
+        fi
+
+        sleep 2
+      done
+
+    # Run Playwright screenshot tests
+    - npx playwright test
+
+  after_script:
+    # Print logs if something went wrong
+    - docker compose -f docker-compose.e2e.yml logs || true
+
+    # Remove containers / networks / test database
+    - docker compose -f docker-compose.e2e.yml down -v || true
+
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
+    expire_in: 1 week
+
+
+# --------------------------------------------------
+# BUILD + PUSH FRONTEND DOCKER IMAGE
+# --------------------------------------------------
+
+docker:
+  stage: docker
+
+  image: docker:24
+
+  services:
+    - name: docker:24-dind
+      alias: docker
+
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+
+  script:
+    - docker build -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA" .
+    - docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA" "$CI_REGISTRY_IMAGE:latest"
+
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
+    - docker push "$CI_REGISTRY_IMAGE:latest"

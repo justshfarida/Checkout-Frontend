@@ -167,11 +167,11 @@
 .item-card__title {
   margin: 0;
  /* change this for testing */
-  color: #141d1f;
+  color: var(--color-text);
 
   font-family: var(--font-family);
   font-size: 15px;
-  font-weight: 400;
+  font-weight: 700;
   line-height: 100%;
   letter-spacing: 0%;
 }

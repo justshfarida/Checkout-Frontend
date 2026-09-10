@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:18-alpine
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: checkout
+
+    volumes:
+      - ./tests/fixtures/checkout_test.sql:/docker-entrypoint-initdb.d/checkout_test.sql
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d checkout"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    image: school-gitlab.xsolla.dev:5050/baku/checkout-api:0985c664bc443522127f18ea7be91187697159bb
+
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/checkout?sslmode=disable
+      JWT_SECRET: test-jwt-secret
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    ports:
+      - "8080:8080"
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    depends_on:
+      - backend
+
+    ports:
+      - "3000:80"
