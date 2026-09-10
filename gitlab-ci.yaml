@@ -61,9 +61,6 @@ build:
 visual_tests:
   stage: test
 
-  # IMPORTANT:
-  # Replace this version with the version from:
-  # npm list @playwright/test
   image: mcr.microsoft.com/playwright:v1.63.0-noble
 
   services:
@@ -75,33 +72,32 @@ visual_tests:
     DOCKER_TLS_CERTDIR: ""
 
     # Playwright runs in the GitLab job container.
-    # The frontend runs inside Docker-in-Docker.
+    # Frontend is exposed by Docker-in-Docker on port 3000.
     BASE_URL: http://docker:3000
-    FRONTEND_URL: http://docker:3000
 
   before_script:
-    # Install Docker CLI + Compose
+    # Install Docker CLI, Docker Compose and curl
     - apt-get update
     - apt-get install -y docker.io docker-compose-v2 curl
 
     # Install frontend dependencies
     - npm ci --cache .npm --prefer-offline
 
-    # Login to GitLab Container Registry
-    # Needed because docker-compose.e2e.yml pulls the private backend image
+    # Login to GitLab Container Registry.
+    # Needed because docker-compose.e2e.yml pulls the private backend image.
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
 
   script:
-    # Start:
-    # PostgreSQL + backend + frontend
+    # Start PostgreSQL + backend + frontend
     - docker compose -f docker-compose.e2e.yml up -d --build
 
-    # Useful in CI logs
+    # Show running containers in CI logs
     - docker compose -f docker-compose.e2e.yml ps
 
-    # Wait until frontend is actually available
+    # Wait until frontend is ready
     - |
       echo "Waiting for frontend..."
+
       for i in $(seq 1 30); do
         if curl -f http://docker:3000 > /dev/null 2>&1; then
           echo "Frontend is ready."
@@ -110,7 +106,9 @@ visual_tests:
 
         if [ "$i" -eq 30 ]; then
           echo "Frontend did not become ready."
+
           docker compose -f docker-compose.e2e.yml logs
+
           exit 1
         fi
 
@@ -121,10 +119,10 @@ visual_tests:
     - npx playwright test
 
   after_script:
-    # Print logs if something went wrong
+    # Print container logs
     - docker compose -f docker-compose.e2e.yml logs || true
 
-    # Remove containers / networks / test database
+    # Remove containers, network and test database
     - docker compose -f docker-compose.e2e.yml down -v || true
 
   artifacts:
@@ -156,8 +154,12 @@ docker:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
 
   script:
+    # Build frontend image
     - docker build -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA" .
+
+    # Tag latest
     - docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA" "$CI_REGISTRY_IMAGE:latest"
 
+    # Push both tags
     - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
     - docker push "$CI_REGISTRY_IMAGE:latest"
