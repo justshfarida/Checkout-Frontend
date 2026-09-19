@@ -1,0 +1,126 @@
+.payment-success-page {
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: var(--page-padding);
+  background: var(--color-background);
+}
+
+.payment-success-card {
+  width: 100%;
+  max-width: 520px;
+
+  padding: var(--space-2xl);
+
+  text-align: center;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-card);
+}
+
+.payment-success-icon {
+  width: 64px;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto var(--space-lg);
+
+  background: var(--color-accent);
+  border-radius: var(--radius-pill);
+
+  color: #141d1f;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.payment-success-title {
+  margin: 0 0 var(--space-sm);
+
+  color: var(--color-text);
+
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.payment-success-text {
+  margin: 0 0 var(--space-xl);
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+.payment-success-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
+.payment-success-button {
+  padding: 12px var(--space-lg);
+
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+
+  background: var(--color-accent);
+  color: #141d1f;
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.payment-success-button:hover {
+  background: var(--color-accent-hover);
+  transform: translateY(-1px);
+}
+
+.payment-success-button-secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+
+.payment-success-button-secondary:hover {
+  background: var(--color-surface-muted);
+}
+
+.payment-success-loading {
+  margin: 0;
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-md);
+}
+
+@media (max-width: 600px) {
+  .payment-success-card {
+    padding:
+      var(--space-xl)
+      var(--space-lg);
+  }
+
+  .payment-success-actions {
+    flex-direction: column;
+  }
+
+  .payment-success-button {
+    width: 100%;
+  }
+}
