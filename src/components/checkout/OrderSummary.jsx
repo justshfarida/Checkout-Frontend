@@ -41,11 +41,7 @@ export default function OrderSummary() {
       return;
     }
 
-    const result = await checkout();
-
-    if (result?.payment?.success) {
-      clearCart();
-    }
+    await checkout();
   }
 
   function startNewOrder() {

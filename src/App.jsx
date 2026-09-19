@@ -10,7 +10,7 @@ import LoginPage from "./pages/LoginPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrdersPage from "./pages/OrdersPage";
 import SignupPage from "./pages/SignupPage";
-
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import Footer from "./components/layout/Footer";
 
 export default function App() {
@@ -58,6 +58,10 @@ export default function App() {
           path="/signup"
           element={<SignupPage />}
         />
+        <Route
+        path="/payment/success"
+        element={<PaymentSuccessPage />}
+      />
       </Routes>
 
       <Footer

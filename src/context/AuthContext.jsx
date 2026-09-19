@@ -39,14 +39,18 @@ export function AuthProvider({ children }) {
       `Bearer ${token}`;
   }
 
-  function logout() {
-    setAccessToken(null);
+  async function logout() {
+    try {
+        await api.post("/logout");
+    } finally {
+        setAccessToken(null);
 
-    localStorage.removeItem(
-      ACCESS_TOKEN_KEY
-    );
+        localStorage.removeItem(
+            ACCESS_TOKEN_KEY
+        );
 
-    delete api.defaults.headers.common.Authorization;
+        delete api.defaults.headers.common.Authorization;
+    }
   }
 
   useEffect(() => {
@@ -83,7 +87,7 @@ export function AuthProvider({ children }) {
 
           try {
             const response =
-              await api.get("/token");
+              await api.post("/token");
 
             const newAccessToken =
               response.data.jwt;
