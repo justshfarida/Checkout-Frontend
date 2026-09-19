@@ -41,7 +41,7 @@ export default function OrderSummary() {
       return;
     }
 
-    const result = await checkout();
+    await checkout();
   }
 
   function startNewOrder() {
