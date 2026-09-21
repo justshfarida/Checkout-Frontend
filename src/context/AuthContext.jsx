@@ -141,13 +141,13 @@ export function AuthProvider({ children }) {
     };
   }, [accessToken]);
 
-  useEffect(() => {
-    if (accessToken) {
-      loadCurrentUser().catch(() => {});
-    } else {
-      setUser(null);
-    }
-  }, [accessToken]);
+  // useEffect(() => {
+  //   if (accessToken) {
+  //     loadCurrentUser().catch(() => {});
+  //   } else {
+  //     setUser(null);
+  //   }
+  // }, [accessToken]);
 
   const isAuthenticated =
     Boolean(accessToken);

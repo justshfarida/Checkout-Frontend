@@ -100,9 +100,7 @@ export function CartProvider({ children }) {
         variants[index % variants.length],
 
       soldOut:
-        item.credit_amount == null &&
-
-        item.stock <= 0,
+        item.credit_amount == null && item.stock <= 0
     };
   }
 

@@ -18,7 +18,7 @@ export default function CartItem({ item }) {
         <div className="cart-item__info">
           <h2 className="cart-item__name">{item.name}</h2>
 
-          {item.credit_amount == null && (
+          {item.item_type == "merch" && (
             <p className="cart-item__stock">{item.stock} in stock</p>
           )}
         </div>

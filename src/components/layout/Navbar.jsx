@@ -52,15 +52,20 @@ export default function Navbar() {
             </Link>
           )}
           {isAuthenticated && (
+            <Link to="/inventory" className="navbar__desktop-link">
+              Inventory
+            </Link>
+          )}
+          {isAuthenticated && (
             <div className="navbar__balance">
               <img
-                src="/images/coin.svg"
+                src="/images/coin_icon.png"
                 alt=""
                 className="navbar__balance-icon"
               />
 
               <span>{user?.balance ?? 0} Gold</span>
-            </div>  
+            </div>
           )}
           {/* CART */}
           <Link
@@ -130,7 +135,13 @@ export default function Navbar() {
             >
               Orders
             </Link>
-
+            <Link
+              to="/inventory"
+              className="navbar__mobile-link"
+              onClick={handleMenuClose}
+            >
+              Inventory
+            </Link>
             <button
               className="navbar__mobile-link navbar__mobile-signout"
               type="button"
