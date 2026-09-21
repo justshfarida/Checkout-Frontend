@@ -27,6 +27,31 @@ export function AuthProvider({ children }) {
   const [accessToken, setAccessToken] =
     useState(getInitialAccessToken);
 
+  const [user, setUser] = useState(null);
+
+  async function loadCurrentUser() {
+    if (!accessToken) {
+      setUser(null);
+      return;
+    }
+
+    try {
+      const response =
+        await api.get("/user/me");
+
+      setUser(response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Failed to load current user:",
+        error
+      );
+
+      throw error;
+    }
+  }
+
   function login(token) {
     setAccessToken(token);
 
@@ -41,15 +66,16 @@ export function AuthProvider({ children }) {
 
   async function logout() {
     try {
-        await api.post("/logout");
+      await api.post("/logout");
     } finally {
-        setAccessToken(null);
+      setAccessToken(null);
+      setUser(null);
 
-        localStorage.removeItem(
-            ACCESS_TOKEN_KEY
-        );
+      localStorage.removeItem(
+        ACCESS_TOKEN_KEY
+      );
 
-        delete api.defaults.headers.common.Authorization;
+      delete api.defaults.headers.common.Authorization;
     }
   }
 
@@ -102,17 +128,25 @@ export function AuthProvider({ children }) {
             logout();
 
             return Promise.reject(
-              refreshError
-            ); //simple return is like that: return Promise.resolve(undefined);
+              refreshError //simple return is like that: promise.resolve(undefined)
+            );
           }
         }
       );
 
     return () => {
       api.interceptors.response.eject(
-        interceptor
+        interceptor //cleanup function, unregister the interceptor
       );
-    }; //cleanup function unregister the interceptor
+    };
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (accessToken) {
+      loadCurrentUser().catch(() => {});
+    } else {
+      setUser(null);
+    }
   }, [accessToken]);
 
   const isAuthenticated =
@@ -123,8 +157,10 @@ export function AuthProvider({ children }) {
       value={{
         accessToken,
         isAuthenticated,
+        user,
         login,
         logout,
+        loadCurrentUser,
       }}
     >
       {children}

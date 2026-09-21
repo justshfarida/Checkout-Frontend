@@ -78,6 +78,7 @@ export default function StorePage() {
                 ],
 
               soldOut:
+                item.credit_amount == null &&
                 item.stock <= 0,
             })
           );
