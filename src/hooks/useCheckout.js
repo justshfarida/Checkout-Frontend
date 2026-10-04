@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import api from "../api/client";
 
@@ -6,6 +6,24 @@ export function useCheckout() {
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
   const [order, setOrder] = useState(null);
+
+  // When the user leaves for Pay Station and presses Back, the browser can
+  // restore this page from its back/forward cache with the old state
+  // ("Processing..." and a stale cart). Reset checkout and reload the page
+  // so the button works again and the cart is fetched fresh.
+  useEffect(() => {
+    function handlePageShow(event) {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    }
+
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, []);
 
   async function checkout() {
     if (status === "processing") return;
