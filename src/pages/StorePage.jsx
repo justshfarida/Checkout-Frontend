@@ -78,7 +78,7 @@ export default function StorePage() {
                 ],
 
               soldOut:
-                item.stock <= 0,
+              item.item_type === "merch" && item.stock <= 0
             })
           );
 

@@ -1,42 +1,34 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router";
 import { useCart } from "../context/CartContext";
-
+import { useAuth } from "../context/AuthContext";
 import "./PaymentSuccessPage.css";
 
 export default function PaymentSuccessPage() {
   const navigate = useNavigate();
 
-  const {
-    loadServerCart,
-  } = useCart();
-
-  const [loading, setLoading] =
-    useState(true);
+  const { loadServerCart } = useCart();
+  const { loadCurrentUser } = useAuth();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function refreshCart() {
+    async function refreshPaymentState() {
       try {
-        await loadServerCart();
+        await Promise.all([loadServerCart(), loadCurrentUser()]);
       } finally {
         setLoading(false);
       }
     }
 
-    refreshCart();
+    refreshPaymentState();
   }, []);
 
   if (loading) {
     return (
       <main className="payment-success-page">
         <div className="payment-success-card">
-          <p className="payment-success-loading">
-            Confirming your payment...
-          </p>
+          <p className="payment-success-loading">Confirming your payment...</p>
         </div>
       </main>
     );
@@ -45,13 +37,9 @@ export default function PaymentSuccessPage() {
   return (
     <main className="payment-success-page">
       <div className="payment-success-card">
-        <div className="payment-success-icon">
-          ✓
-        </div>
+        <div className="payment-success-icon">✓</div>
 
-        <h1 className="payment-success-title">
-          Payment successful
-        </h1>
+        <h1 className="payment-success-title">Payment successful</h1>
 
         <p className="payment-success-text">
           Your payment has been completed successfully.

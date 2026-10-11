@@ -10,6 +10,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@datadog/browser-rum": "^7.15.0",
+    "@datadog/browser-rum-react": "^7.15.0",
     "@vitejs/plugin-react": "latest",
     "axios": "^1.19.0",
     "react": "latest",

@@ -8,7 +8,7 @@ import { CartProvider } from "./context/CartContext";
 import "./styles/tokens.css";
 import "./styles/globals.css";
 import { AuthProvider } from "./context/AuthContext";
-
+import './telemetry/rum';
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>

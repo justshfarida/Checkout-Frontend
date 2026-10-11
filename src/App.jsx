@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import { Routes, Route } from "react-router";
 
@@ -12,62 +9,34 @@ import OrdersPage from "./pages/OrdersPage";
 import SignupPage from "./pages/SignupPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import Footer from "./components/layout/Footer";
-
+import InventoryPage from "./pages/InventoryPage";
 export default function App() {
   const [theme, setTheme] = useState("light");
 
   useEffect(() => {
-    document.documentElement.setAttribute(
-      "data-theme",
-      theme
-    );
+    document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
   function handleThemeToggle() {
-    setTheme((currentTheme) =>
-      currentTheme === "light"
-        ? "dark"
-        : "light"
-    );
+    setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
   }
 
   return (
     <div className="page">
       <Routes>
-        <Route
-          path="/"
-          element={<StorePage />}
-        />
+        <Route path="/" element={<StorePage />} />
 
-        <Route
-          path="/login"
-          element={<LoginPage />}
-        />
+        <Route path="/login" element={<LoginPage />} />
 
-        <Route
-          path="/checkout"
-          element={<CheckoutPage />}
-        />
+        <Route path="/checkout" element={<CheckoutPage />} />
 
-        <Route
-          path="/orders"
-          element={<OrdersPage />}
-        />
-
-        <Route
-          path="/signup"
-          element={<SignupPage />}
-        />
-        <Route
-        path="/payment/success"
-        element={<PaymentSuccessPage />}
-      />
+        <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/inventory" element={<InventoryPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/payment/success" element={<PaymentSuccessPage />} />
       </Routes>
 
-      <Footer
-        theme={theme}
-        onThemeToggle={handleThemeToggle}
-      />
+      <Footer theme={theme} onThemeToggle={handleThemeToggle} />
     </div>
   );
 }

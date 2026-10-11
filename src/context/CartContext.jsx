@@ -100,7 +100,7 @@ export function CartProvider({ children }) {
         variants[index % variants.length],
 
       soldOut:
-        item.stock <= 0,
+        item.item_type === "merch" && item.stock <= 0
     };
   }
 
